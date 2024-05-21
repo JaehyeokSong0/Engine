@@ -400,3 +400,4 @@ FodyWeavers.xsd
 # Custom gitignore
 Build/
 Intermediate/
+External/
