@@ -1,5 +1,6 @@
 #pragma once
 #include "../Window/Window.h"
+#include "../Renderer/Renderer.h"
 
 class Engine
 {
@@ -7,7 +8,7 @@ public:
 	Engine();
 	virtual ~Engine();
 
-	void Initialize(
+	HRESULT Initialize(
 		HINSTANCE hInstance, LPCTSTR className, LPCTSTR windowName,
 		int width, int height);
 	void Run();
@@ -18,4 +19,5 @@ public:
 protected:
 private:
 	Window* window = nullptr;
+	Renderer* renderer = nullptr;
 };

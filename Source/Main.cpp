@@ -1,11 +1,11 @@
 #include <stdafx.h>
-#include "Window/Window.h"
 #include "Engine/Engine.h"
 
 /* MEMO
  1. Struct
-  - Engine이 Window*를 가지고 있는 구조
   - Game은 Engine을 상속
+  - Engine이 Window* 보유
+  - Engine이 Renderer* 보유
  2. Reminder
   - RTV 생성 후 backBuffer release
   - FAILED(HRESULT)

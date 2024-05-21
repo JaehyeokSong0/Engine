@@ -21,10 +21,10 @@ LRESULT Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
         case WM_CREATE:
-            DebugLog("Window Create");
+            DebugLog("WindowProc: WM_CREATE");
             return 0;
         case WM_DESTROY:
-            DebugLog("Window Destroy");
+            DebugLog("WindowProc: WM_DESTROY");
             PostQuitMessage(0);
             return 0;
         default:
@@ -36,14 +36,20 @@ HRESULT Window::Initialize(
     HINSTANCE hInstance, LPCTSTR className, LPCTSTR windowName,
     int width = CW_USEDEFAULT, int height = CW_USEDEFAULT)
 {
+    HRESULT hr = S_OK;
+
     this->hInstance = hInstance;
     this->className = className;
     this->windowName = windowName;
     this->width = width;
     this->height = height;
 
-    if(FAILED(RegisterWindow()))
-        return E_FAIL;
+    hr = RegisterWindow();
+    if(FAILED(hr))
+    {
+        DebugLog("RegisterWindow Failed");
+        return hr;
+    }
 
     this->hWnd = CreateWindowEx(
         WS_OVERLAPPED,
@@ -58,13 +64,16 @@ HRESULT Window::Initialize(
         nullptr);
 
     if (this->hWnd == nullptr)
+    {
+        DebugLog("CreateWindowEx Failed");
         return E_FAIL;
+    }
 
     // 창을 활성화하고 현재 크기와 위치에 표시
     ShowWindow(this->hWnd, SW_SHOW);
     UpdateWindow(this->hWnd);
 
-    return S_OK;
+    return hr;
 }
 
 HRESULT Window::RegisterWindow() const

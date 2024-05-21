@@ -4,6 +4,7 @@
 Engine::Engine()
 {
 	window = new Window();
+	renderer = new Renderer();
 }
 
 Engine::~Engine()
@@ -13,13 +14,34 @@ Engine::~Engine()
 		delete window;
 		window = nullptr;
 	}
+	if (renderer != nullptr)
+	{
+		delete renderer;
+		renderer = nullptr;
+	}
 }
 
-void Engine::Initialize(
+HRESULT Engine::Initialize(
 	HINSTANCE hInstance, LPCTSTR className, LPCTSTR windowName,
 	int width, int height)
 {
-	window->Initialize(hInstance, className, windowName, width, height);
+	HRESULT hr = S_OK;
+	
+	hr = window->Initialize(hInstance, className, windowName, width, height);
+	if (FAILED(hr))
+	{
+		DebugLog("Window Initialization Failed");
+		return hr;
+	}
+
+	hr = renderer->Initialize(window->GetHandle(), width, height);
+	if (FAILED(hr))
+	{
+		DebugLog("Renderer Initialization Failed");
+		return hr;
+	}
+
+	return hr;
 }
 
 void Engine::Run()
@@ -44,7 +66,7 @@ bool Engine::ProcessMessage()
 	{
 		if (message.message == WM_QUIT)
 		{
-			DebugLog("Engine: WM_QUIT");
+			DebugLog("ProcessMessage: WM_QUIT");
 			return false;
 		}
 		

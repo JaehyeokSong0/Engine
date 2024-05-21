@@ -6,4 +6,3 @@ void DebugLog(string str, const source_location& loc)
 	cout << "[" << loc.function_name() << "] (" << loc.line() << ":" << loc.column() << ")" << str << "\n";
 #endif
 }
-
