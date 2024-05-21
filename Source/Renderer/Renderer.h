@@ -1,4 +1,6 @@
 #pragma once
+#include "../Shader/VertexShader.h"
+#include "../Shader/PixelShader.h"
 
 class Renderer final
 {
