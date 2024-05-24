@@ -39,6 +39,7 @@
     <ClInclude Include="Window\Window.h">
       <Filter>Window</Filter>
     </ClInclude>
+    <ClInclude Include="DataType.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">
@@ -53,5 +54,9 @@
     <Filter Include="Window">
       <UniqueIdentifier>{af637756-78a5-4dec-9ada-488df9d2784d}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\VertexShader.hlsl" />
+    <FxCompile Include="Shader\PixelShader.hlsl" />
   </ItemGroup>
 </Project>

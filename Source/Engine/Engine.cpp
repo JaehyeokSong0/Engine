@@ -82,5 +82,5 @@ void Engine::Update()
 
 void Engine::Render()
 {
-
+	renderer->Render();
 }

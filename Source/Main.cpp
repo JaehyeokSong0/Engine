@@ -6,6 +6,7 @@
   - Game은 Engine을 상속
   - Engine이 Window* 보유
   - Engine이 Renderer* 보유
+  - Shader는 Renderer가 보유
  2. Reminder
   - RTV 생성 후 backBuffer release
   - FAILED(HRESULT)

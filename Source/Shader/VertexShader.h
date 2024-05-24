@@ -1,19 +1,18 @@
 #pragma once
+#include "../DataType.h"
 
 class VertexShader
 {
 public:
 	~VertexShader();
 	HRESULT Initialize(ID3D11Device* device);
-	
-	ID3D11VertexShader* GetVertexShader();
-	ID3D11InputLayout* GetInputLayout();
+
+	ID3DBlob* GetVertexBufferBlob() const;
+	ID3D11VertexShader* GetVertexShader() const;
+	ID3D11InputLayout* GetInputLayout() const;
+
 private:
-	ID3D11InputLayout* inputLayout;
-
-	ID3D11VertexShader* vertexShader;
-	ID3DBlob* vertexBuffer;
-
-	D3D11_BUFFER_DESC bd;
-	D3D11_SUBRESOURCE_DATA sd;
+	ID3DBlob* vertexBufferBlob = nullptr;
+	ID3D11VertexShader* vertexShader = nullptr;
+	ID3D11InputLayout* inputLayout = nullptr;
 };
