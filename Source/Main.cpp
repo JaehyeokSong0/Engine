@@ -21,8 +21,23 @@ int APIENTRY wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd)
 {
+	HRESULT hr = S_OK;
+
+	// 현재 thread에서 COM library 초기화
+	hr = CoInitialize(NULL);
+	if (FAILED(hr))
+	{
+		DebugLog("CoInitialize Failed");
+		return hr;
+	}
+
 	Engine* engine = new Engine();
-	engine->Initialize(hInstance, TEXT("class"), TEXT("window"), 960, 540);
+	hr = engine->Initialize(hInstance, TEXT("class"), TEXT("window"), 600, 800);
+	if (FAILED(hr))
+	{
+		DebugLog("Engine initialization Failed");
+		return hr;
+	}
 	engine->Run();
 
 	delete engine;

@@ -18,6 +18,7 @@
     <ClCompile Include="Window\Window.cpp">
       <Filter>Window</Filter>
     </ClCompile>
+    <ClCompile Include="Texture\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -40,6 +41,7 @@
       <Filter>Window</Filter>
     </ClInclude>
     <ClInclude Include="DataType.h" />
+    <ClInclude Include="Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">
@@ -58,5 +60,8 @@
   <ItemGroup>
     <FxCompile Include="Shader\VertexShader.hlsl" />
     <FxCompile Include="Shader\PixelShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Textures\Tottenham_Hotspur.png" />
   </ItemGroup>
 </Project>

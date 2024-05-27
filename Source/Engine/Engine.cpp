@@ -56,7 +56,7 @@ void Engine::Run()
 bool Engine::ProcessMessage()
 {
 	MSG message;
-	ZeroMemory(&message, sizeof(MSG));
+	ZeroMemory(&message, sizeof(message));
 
 	while (PeekMessage(&message,
 		NULL, // NULL인 경우 현재 스레드의 모든 창에 대한 message 검색

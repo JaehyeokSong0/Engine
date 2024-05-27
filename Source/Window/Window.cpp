@@ -51,17 +51,32 @@ HRESULT Window::Initialize(
         return hr;
     }
 
+    // Resize window
+    DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+    int centerScreenX = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+    int centerScreenY = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+
+    RECT windowRect = {};
+    windowRect.left = centerScreenX;
+    windowRect.right = windowRect.left + width;
+    windowRect.top = centerScreenY;
+    windowRect.bottom = windowRect.top + height;
+    AdjustWindowRect(&windowRect, dwStyle, FALSE);
+
     this->hWnd = CreateWindowEx(
         WS_OVERLAPPED,
         className,
         windowName,
-        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 
-        0, 0,
-        width, height,
+        dwStyle, 
+        windowRect.left, 
+        windowRect.top,
+        windowRect.right - windowRect.left,
+        windowRect.bottom - windowRect.top,
         nullptr,
         nullptr,
         this->hInstance,
-        nullptr);
+        nullptr
+    );
 
     if (this->hWnd == nullptr)
     {

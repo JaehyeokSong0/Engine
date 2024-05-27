@@ -11,6 +11,8 @@ Renderer::Renderer()
 {
 	vertexShader = new VertexShader();
 	pixelShader = new PixelShader();
+	
+	texture = new Texture(L"Resources/Textures/Tottenham_Hotspur.png");
 }
 
 // (TODO) ComPtr로 변환하기
@@ -52,7 +54,7 @@ Renderer::~Renderer()
 		depthStencilState->Release();
 		depthStencilState = nullptr;
 	}
-	
+
 	// Delete Shaders
 	if (vertexShader != nullptr)
 	{
@@ -71,12 +73,24 @@ Renderer::~Renderer()
 		vertexBuffer->Release();
 		vertexBuffer = nullptr;
 	}
-
+	if (indexBuffer != nullptr)
+	{
+		indexBuffer->Release();
+		indexBuffer = nullptr; 
+	}
+	
 	// Delete Rasterizer
 	if (rasterizerState != nullptr)
 	{
 		rasterizerState->Release();
 		rasterizerState = nullptr;
+	}
+
+	// Delete Texture
+	if (texture != nullptr)
+	{
+		delete texture;
+		texture = nullptr;
 	}
 }
 
@@ -86,7 +100,8 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 	HRESULT hr = S_OK;
 
 	// Initialize SwapChain description
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+	// ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 	swapChainDesc.BufferDesc.Width = width;
 	swapChainDesc.BufferDesc.Height = height;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1u;
@@ -146,9 +161,10 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 		DebugLog("CreateRenderTargetView Failed");
 		return hr;
 	}
-	
+
 	// Create depth stencil buffer 
-	ZeroMemory(&depthStencilBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	D3D11_TEXTURE2D_DESC depthStencilBufferDesc = {};
+	//ZeroMemory(&depthStencilBufferDesc, sizeof(depthStencilBufferDesc));
 	depthStencilBufferDesc.Width = width;
 	depthStencilBufferDesc.Height = height;
 	depthStencilBufferDesc.MipLevels = 1u;
@@ -183,13 +199,14 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 	);
 
 	// Create depth stencil state
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	depthStencilDesc.DepthEnable = TRUE;
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Turn on writes to the depth-stencil buffer
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 	// D3D11_COMPARISON_LESS : If the source data is less than the destination data, the comparison passes
-	// => 그리는 정점이 더 앞에 있을 때만 깊이 갱신
+	// => 그리는 정점이 더 앞에 있을 때만 깊이 갱신 (source : 새 데이터 / destination : 기존 데이터)
 	// D3D11_COMPARISON_EQUAL : If the source data is equal to the destination data, the comparison passes
-	
+
 	hr = device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
 	if (FAILED(hr))
 	{
@@ -209,7 +226,7 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 	context->RSSetViewports(
 		1u, &viewport
 	);
-	
+
 	// Create Rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};
 	//ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -225,6 +242,9 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 		DebugLog("CreateRasterizerState Failed");
 		return hr;
 	}
+
+	// Initialize texture
+	hr = texture->Initialize(device, context);
 
 	// Set Shaders
 	hr = InitializeShaders();
@@ -261,7 +281,7 @@ HRESULT Renderer::InitializeShaders()
 		DebugLog("PixelShader Initialization Failed");
 		return hr;
 	}
-	
+
 	return hr;
 }
 
@@ -272,43 +292,48 @@ HRESULT Renderer::InitializeScene()
 	// TEST CODE
 	Vertex testVertex[] =
 	{
-		Vertex(XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
-		Vertex(XMFLOAT3(0.0f, 0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)),
-		Vertex(XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f))
-	};
-	Vertex testVertex2[] =
-	{
-		Vertex(XMFLOAT3(-0.5f, 0.25f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f)),
-		Vertex(XMFLOAT3(0.5f, 0.25f, 0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f)),
-		Vertex(XMFLOAT3(-0.5f, -0.25f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f))
+		Vertex(XMFLOAT3(-0.5f, -0.5f, 1.0f), XMFLOAT2(0.0f, 1.0f)),
+		Vertex(XMFLOAT3(-0.5f, 0.5f, 1.0f), XMFLOAT2(0.0f, 0.0f)),
+		Vertex(XMFLOAT3(0.5f, 0.5f, 1.0f), XMFLOAT2(1.0f, 0.0f)),
+		Vertex(XMFLOAT3(0.5f, -0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f))
 	};
 
-	// Same as 'vertexBufferDesc = {};'
-	ZeroMemory(&vertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	DWORD testIndices[] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	D3D11_BUFFER_DESC vertexBufferDesc = {};
+	//ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * _countof(testVertex);
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0u; // 0 : NO CPU Access
 
-	ZeroMemory(&vertexInitData, sizeof(D3D11_SUBRESOURCE_DATA));
+	D3D11_SUBRESOURCE_DATA vertexInitData = {};
+	//ZeroMemory(&vertexInitData, sizeof(vertexInitData));
 	vertexInitData.pSysMem = testVertex; // pSysMem : 초기화 데이터
 
 	hr = device->CreateBuffer(&vertexBufferDesc, &vertexInitData, &vertexBuffer);
 	if (FAILED(hr))
 	{
-		DebugLog("CreateBuffer Failed");
+		DebugLog("Create Vertex buffer Failed");
 		return hr;
 	}
 
-	// TEST CODE
-	ZeroMemory(&vertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * _countof(testVertex2);
-	ZeroMemory(&vertexInitData, sizeof(D3D11_SUBRESOURCE_DATA));
-	vertexInitData.pSysMem = testVertex2; 
-	hr = device->CreateBuffer(&vertexBufferDesc, &vertexInitData, vertexBuffer2.GetAddressOf());
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * _countof(testIndices);
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0u;
+
+	D3D11_SUBRESOURCE_DATA indexInitData = {};
+	indexInitData.pSysMem = testIndices;
+	hr = device->CreateBuffer(&indexBufferDesc, &indexInitData, &indexBuffer);
 	if (FAILED(hr))
 	{
-		DebugLog("CreateBuffer Failed 2");
+		DebugLog("Create Index buffer Failed");
 		return hr;
 	}
 
@@ -320,16 +345,18 @@ HRESULT Renderer::Render()
 	HRESULT hr = S_OK;
 
 	// TEST CODE
-	float testBgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	
+	float testBgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
 	context->ClearRenderTargetView(renderTargetView, testBgColor);
 	UINT clearFlags = D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL;
 	context->ClearDepthStencilView(
-		depthStencilView, 
-		clearFlags, 
+		depthStencilView,
+		clearFlags,
 		1.0f, // Value to clear depth
 		0u // Value to clear stencil
-	);  
+	);
+
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	context->IASetInputLayout(vertexShader->GetInputLayout());
 	context->VSSetShader(vertexShader->GetVertexShader(), NULL, 0u);
@@ -340,13 +367,13 @@ HRESULT Renderer::Render()
 
 	UINT offset = 0;
 	UINT stride = sizeof(Vertex);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
-	context->IASetVertexBuffers(0u, 1u, &vertexBuffer, &stride, &offset);
-	context->Draw(3u, 0u);
 
-	context->IASetVertexBuffers(0u, 1u, vertexBuffer2.GetAddressOf(), &stride, &offset);
-	context->Draw(3u, 0u);
+	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
+	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
+
+	context->IASetVertexBuffers(0u, 1u, &vertexBuffer, &stride, &offset);
+	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0u);
+	context->DrawIndexed(6u, 0u, 0);
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음
 	if (FAILED(hr))
