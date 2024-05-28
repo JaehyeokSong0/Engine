@@ -19,6 +19,9 @@
       <Filter>Window</Filter>
     </ClCompile>
     <ClCompile Include="Texture\Texture.cpp" />
+    <ClCompile Include="Shader\Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="Shader\Buffer\IndexBuffer.cpp" />
+    <ClCompile Include="Shader\Buffer\ConstantBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -42,6 +45,11 @@
     </ClInclude>
     <ClInclude Include="DataType.h" />
     <ClInclude Include="Texture\Texture.h" />
+    <ClInclude Include="Shader\Buffer\VertexBuffer.h" />
+    <ClInclude Include="Shader\Buffer\BaseBuffer.h" />
+    <ClInclude Include="Shader\Buffer\IndexBuffer.h" />
+    <ClInclude Include="Shader\Buffer\Buffer.h" />
+    <ClInclude Include="Shader\Buffer\ConstantBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">

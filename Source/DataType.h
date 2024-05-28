@@ -14,3 +14,10 @@ struct Vertex
 	XMFLOAT3 position;
 	XMFLOAT2 texCoord;
 };
+
+struct Constant_Buffer
+{
+	// TEST Variables
+	float xOffset = 0;
+	float yOffset = 0;
+};

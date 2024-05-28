@@ -12,6 +12,10 @@ Renderer::Renderer()
 	vertexShader = new VertexShader();
 	pixelShader = new PixelShader();
 	
+	vertexBuffer = new VertexBuffer();
+	indexBuffer = new IndexBuffer();
+	constantBuffer = new ConstantBuffer();
+
 	texture = new Texture(L"Resources/Textures/Tottenham_Hotspur.png");
 }
 
@@ -55,7 +59,7 @@ Renderer::~Renderer()
 		depthStencilState = nullptr;
 	}
 
-	// Delete Shaders
+	// Delete Shader
 	if (vertexShader != nullptr)
 	{
 		delete vertexShader;
@@ -67,16 +71,21 @@ Renderer::~Renderer()
 		pixelShader = nullptr;
 	}
 
-	// Delete vertex buffer
-	if (vertexBuffer != nullptr)
+	// Delete buffers
+	if (vertexBuffer!= nullptr)
 	{
-		vertexBuffer->Release();
+		delete vertexBuffer;
 		vertexBuffer = nullptr;
 	}
 	if (indexBuffer != nullptr)
 	{
-		indexBuffer->Release();
+		delete indexBuffer;
 		indexBuffer = nullptr; 
+	}
+	if (constantBuffer!= nullptr)
+	{
+		delete constantBuffer;
+		constantBuffer = nullptr;
 	}
 	
 	// Delete Rasterizer
@@ -290,7 +299,7 @@ HRESULT Renderer::InitializeScene()
 	HRESULT hr = S_OK;
 
 	// TEST CODE
-	Vertex testVertex[] =
+	vector<Vertex> testVertex =
 	{
 		Vertex(XMFLOAT3(-0.5f, -0.5f, 1.0f), XMFLOAT2(0.0f, 1.0f)),
 		Vertex(XMFLOAT3(-0.5f, 0.5f, 1.0f), XMFLOAT2(0.0f, 0.0f)),
@@ -298,45 +307,43 @@ HRESULT Renderer::InitializeScene()
 		Vertex(XMFLOAT3(0.5f, -0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f))
 	};
 
-	DWORD testIndices[] =
+	vector<UINT> testIndex =
 	{
 		0, 1, 2,
 		0, 2, 3
 	};
 
-	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	//ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * _countof(testVertex);
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0u; // 0 : NO CPU Access
+	Constant_Buffer testCB;
+	testCB.xOffset = 0.5f;
+	testCB.yOffset = 0.5f;
 
-	D3D11_SUBRESOURCE_DATA vertexInitData = {};
-	//ZeroMemory(&vertexInitData, sizeof(vertexInitData));
-	vertexInitData.pSysMem = testVertex; // pSysMem : 초기화 데이터
-
-	hr = device->CreateBuffer(&vertexBufferDesc, &vertexInitData, &vertexBuffer);
+	hr = vertexBuffer->Create(device, testVertex);
 	if (FAILED(hr))
 	{
 		DebugLog("Create Vertex buffer Failed");
 		return hr;
 	}
 
-	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * _countof(testIndices);
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0u;
-
-	D3D11_SUBRESOURCE_DATA indexInitData = {};
-	indexInitData.pSysMem = testIndices;
-	hr = device->CreateBuffer(&indexBufferDesc, &indexInitData, &indexBuffer);
+	hr = indexBuffer->Create(device, testIndex);
 	if (FAILED(hr))
 	{
 		DebugLog("Create Index buffer Failed");
 		return hr;
 	}
+	
+	hr = constantBuffer->Create(device, sizeof(Constant_Buffer));
+	if (FAILED(hr))
+	{
+		DebugLog("Create Constant buffer Failed");
+		return hr;
+	}
 
+	hr = constantBuffer->SetData(context, &testCB);
+	if (FAILED(hr))
+	{
+		DebugLog("Constant buffer SetData Failed");
+		return hr;
+	}
 	return hr;
 }
 
@@ -371,8 +378,11 @@ HRESULT Renderer::Render()
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
-	context->IASetVertexBuffers(0u, 1u, &vertexBuffer, &stride, &offset);
-	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0u);
+	// context->IASetVertexBuffers(0u, 1u, &vertexBuffer, &stride, &offset);
+	//context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0u);
+	vertexBuffer->Bind(context);
+	indexBuffer->Bind(context);
+	constantBuffer->Bind(context);
 	context->DrawIndexed(6u, 0u, 0);
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음
@@ -387,7 +397,7 @@ HRESULT Renderer::Render()
 
 
 
-ID3D11Buffer* Renderer::GetVertexBuffer() const
+VertexBuffer* Renderer::GetVertexBuffer() const
 {
 	return this->vertexBuffer;
 }

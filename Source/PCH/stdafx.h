@@ -20,8 +20,10 @@
 #include <source_location>
 #include <string>
 
+#include <vector>
+
 using namespace std;
-using Microsoft::WRL::ComPtr;
+using namespace Microsoft::WRL;
 using namespace DirectX;
 
 void DebugLog(string str, const source_location& loc = source_location::current());

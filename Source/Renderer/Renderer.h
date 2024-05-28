@@ -2,6 +2,7 @@
 #include "../Shader/VertexShader.h"
 #include "../Shader/PixelShader.h"
 #include "../Texture/Texture.h"
+#include "../Shader/Buffer/Buffer.h"
 
 class Renderer final
 {
@@ -16,7 +17,7 @@ public:
 
 	HRESULT InitializeShaders();
 
-	ID3D11Buffer* GetVertexBuffer() const;
+	VertexBuffer* GetVertexBuffer() const;
 
 private:
 	ID3D11Device* device = nullptr;
@@ -27,9 +28,9 @@ private:
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 	ID3D11DepthStencilState* depthStencilState = nullptr;
 	
-	ID3D11Buffer* vertexBuffer = nullptr;
-	ID3D11Buffer* indexBuffer = nullptr;
-
+	VertexBuffer* vertexBuffer = nullptr;
+	IndexBuffer* indexBuffer = nullptr;
+	ConstantBuffer* constantBuffer = nullptr;
 	ID3D11RasterizerState* rasterizerState = nullptr;
 
 	VertexShader* vertexShader = nullptr;
