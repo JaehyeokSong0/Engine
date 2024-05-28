@@ -2,17 +2,11 @@
 #include "Engine/Engine.h"
 
 /* MEMO
- 1. Struct
+	<Struct>
   - Game은 Engine을 상속
-  - Engine이 Window* 보유
-  - Engine이 Renderer* 보유
-  - Shader는 Renderer가 보유
- 2. Reminder
-  - RTV 생성 후 backBuffer release
-  - FAILED(HRESULT)
- 3. Debug
-  - Debug mode에서만 console 출력
-  - Logger는 stdafx.h/DebugLog 사용
+  - Engine이 Window*를 보유
+  - Engine이 Renderer*를 보유
+  - VB,IB,CB는 BaseBuffer를 상속
 */ 
 
 int APIENTRY wWinMain(

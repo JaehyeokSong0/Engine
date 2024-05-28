@@ -3,10 +3,10 @@
 
 PixelShader::~PixelShader()
 {
-	if (pixelBuffer != nullptr)
+	if (pixelBufferBlob != nullptr)
 	{
-		pixelBuffer->Release();
-		pixelBuffer = nullptr;
+		pixelBufferBlob->Release();
+		pixelBufferBlob = nullptr;
 	}
 	if (pixelShader != nullptr)
 	{
@@ -28,7 +28,7 @@ HRESULT PixelShader::Initialize(ID3D11Device* device)
 		nullptr, // Include
 		"PSMain", "ps_5_0",
 		0u, 0u, // Flags
-		&pixelBuffer,
+		&pixelBufferBlob,
 		&errorMsgs);
 	if (FAILED(hr))
 	{
@@ -41,8 +41,8 @@ HRESULT PixelShader::Initialize(ID3D11Device* device)
 
 	// Create Pixel Shader
 	hr = device->CreatePixelShader(
-		pixelBuffer->GetBufferPointer(),
-		pixelBuffer->GetBufferSize(),
+		pixelBufferBlob->GetBufferPointer(),
+		pixelBufferBlob->GetBufferSize(),
 		nullptr,
 		&pixelShader);
 	if (FAILED(hr))
@@ -56,7 +56,7 @@ HRESULT PixelShader::Initialize(ID3D11Device* device)
 
 ID3DBlob* PixelShader::GetPixelBuffer() const
 {
-    return this->pixelBuffer;
+    return this->pixelBufferBlob;
 }
 
 ID3D11PixelShader* PixelShader::GetPixelShader() const

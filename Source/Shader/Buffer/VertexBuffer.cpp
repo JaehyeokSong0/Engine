@@ -6,7 +6,7 @@ HRESULT VertexBuffer::Create(ID3D11Device* device, const vector<Vertex>& vertice
 	HRESULT hr = S_OK;
 
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
+	bufferDesc.ByteWidth = sizeof(Vertex) * static_cast<UINT>(vertices.size());
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0u; // 0 : NO CPU Access

@@ -5,7 +5,7 @@ HRESULT ConstantBuffer::Create(ID3D11Device* device, UINT size)
 {
 	HRESULT hr = S_OK;
 
-	// CHECK ? dx10 이후로는 필요없나?
+	// CHECK ? dx10 이후로는 필요없나
 	if (size % 16 != 0)
 		size = ((size / 16) + 1) * 16;
 
@@ -20,7 +20,7 @@ HRESULT ConstantBuffer::Create(ID3D11Device* device, UINT size)
 	return hr;
 }
 
-HRESULT ConstantBuffer::SetData(ID3D11DeviceContext* context, void* data)
+HRESULT ConstantBuffer::SetData(ID3D11DeviceContext* context, void* data, UINT size)
 {
 	HRESULT hr = S_OK;
 
@@ -32,15 +32,17 @@ HRESULT ConstantBuffer::SetData(ID3D11DeviceContext* context, void* data)
 		0u, // gpu 사용 중일 때 cpu 작업 지정 플래그
 		&mapInitData
 	);
+	if (FAILED(hr))
+		return hr;
 
 	// (dest, source, length)
-	CopyMemory(mapInitData.pData, data, sizeof(data));
+	CopyMemory(mapInitData.pData, data, size);
 
 	context->Unmap(buffer.Get(), 0);
 	return hr;
 }
 
-void ConstantBuffer::Bind(ID3D11DeviceContext* context)
+void ConstantBuffer::Bind(ID3D11DeviceContext* context, UINT slot)
 {
-	context->VSSetConstantBuffers(0u, 1u, buffer.GetAddressOf());
+	context->VSSetConstantBuffers(slot, 1u, buffer.GetAddressOf());
 }

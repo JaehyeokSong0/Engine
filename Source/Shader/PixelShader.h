@@ -10,9 +10,6 @@ public:
 	ID3D11PixelShader* GetPixelShader() const;
 
 private:
-	ID3DBlob* pixelBuffer = nullptr;
+	ID3DBlob* pixelBufferBlob = nullptr;
 	ID3D11PixelShader* pixelShader = nullptr;
-
-	D3D11_BUFFER_DESC pbd = {};
-	D3D11_SUBRESOURCE_DATA psd = {};
 };

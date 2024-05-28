@@ -14,7 +14,8 @@ Renderer::Renderer()
 	
 	vertexBuffer = new VertexBuffer();
 	indexBuffer = new IndexBuffer();
-	constantBuffer = new ConstantBuffer();
+	objectCB = new ConstantBuffer();
+	cameraCB = new ConstantBuffer();
 
 	texture = new Texture(L"Resources/Textures/Tottenham_Hotspur.png");
 }
@@ -82,10 +83,15 @@ Renderer::~Renderer()
 		delete indexBuffer;
 		indexBuffer = nullptr; 
 	}
-	if (constantBuffer!= nullptr)
+	if (objectCB!= nullptr)
 	{
-		delete constantBuffer;
-		constantBuffer = nullptr;
+		delete objectCB;
+		objectCB = nullptr;
+	}
+	if (cameraCB != nullptr)
+	{
+		delete cameraCB;
+		cameraCB = nullptr;
 	}
 	
 	// Delete Rasterizer
@@ -313,9 +319,12 @@ HRESULT Renderer::InitializeScene()
 		0, 2, 3
 	};
 
-	Constant_Buffer testCB;
-	testCB.xOffset = 0.5f;
-	testCB.yOffset = 0.5f;
+	ObjectCB testObjectCB = {};
+	testObjectCB.worldMatrix = XMMatrixIdentity();
+
+	CameraCB testCameraCB = {};
+	testCameraCB.projMatrix = XMMatrixIdentity();
+	testCameraCB.viewMatrix = XMMatrixIdentity();
 
 	hr = vertexBuffer->Create(device, testVertex);
 	if (FAILED(hr))
@@ -331,14 +340,28 @@ HRESULT Renderer::InitializeScene()
 		return hr;
 	}
 	
-	hr = constantBuffer->Create(device, sizeof(Constant_Buffer));
+	hr = objectCB->Create(device, sizeof(testObjectCB));
 	if (FAILED(hr))
 	{
 		DebugLog("Create Constant buffer Failed");
 		return hr;
 	}
 
-	hr = constantBuffer->SetData(context, &testCB);
+	hr = objectCB->SetData(context, &testObjectCB, sizeof(testObjectCB));
+	if (FAILED(hr))
+	{
+		DebugLog("Constant buffer SetData Failed");
+		return hr;
+	}
+
+	hr = cameraCB->Create(device, sizeof(testCameraCB));
+	if (FAILED(hr))
+	{
+		DebugLog("Create Constant buffer Failed");
+		return hr;
+	}
+
+	hr = cameraCB->SetData(context, &testCameraCB, sizeof(testCameraCB));
 	if (FAILED(hr))
 	{
 		DebugLog("Constant buffer SetData Failed");
@@ -378,11 +401,11 @@ HRESULT Renderer::Render()
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
-	// context->IASetVertexBuffers(0u, 1u, &vertexBuffer, &stride, &offset);
-	//context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0u);
 	vertexBuffer->Bind(context);
 	indexBuffer->Bind(context);
-	constantBuffer->Bind(context);
+	objectCB->Bind(context, 0u);
+	cameraCB->Bind(context, 1u);
+
 	context->DrawIndexed(6u, 0u, 0);
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음

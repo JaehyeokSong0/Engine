@@ -1,9 +1,13 @@
-cbuffer CONSTANT_BUFFER : register(b0)
+cbuffer cbObject : register(b0)
 {
-    // TEST Variables
-    float xOffset;
-    float yOffset;
+    matrix World;
 };
+
+cbuffer cbCamera : register(b1)
+{
+    matrix View;
+    matrix Projection;
+}
 
 struct VS_INPUT
 {
@@ -21,10 +25,11 @@ VS_OUTPUT VSMain( VS_INPUT input)
 {
     VS_OUTPUT output;
     
-    input.pos.x += xOffset;
-    input.pos.y += yOffset;
-    
-    output.pos = float4(input.pos, 1.0f);
+    output.pos = mul(float4(input.pos, 1.0f), World);
+    output.pos = mul(output.pos, View);
+    output.pos = mul(output.pos, Projection);
+
     output.tex = input.tex;
+    
     return output;
 }

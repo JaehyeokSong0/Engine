@@ -22,6 +22,7 @@
     <ClCompile Include="Shader\Buffer\VertexBuffer.cpp" />
     <ClCompile Include="Shader\Buffer\IndexBuffer.cpp" />
     <ClCompile Include="Shader\Buffer\ConstantBuffer.cpp" />
+    <ClCompile Include="Camera\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="Shader\Buffer\IndexBuffer.h" />
     <ClInclude Include="Shader\Buffer\Buffer.h" />
     <ClInclude Include="Shader\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="Camera\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">

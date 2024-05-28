@@ -15,9 +15,13 @@ struct Vertex
 	XMFLOAT2 texCoord;
 };
 
-struct Constant_Buffer
+struct ObjectCB
 {
-	// TEST Variables
-	float xOffset = 0;
-	float yOffset = 0;
+	XMMATRIX worldMatrix;
+};
+
+struct CameraCB
+{
+	XMMATRIX viewMatrix;
+	XMMATRIX projMatrix;
 };

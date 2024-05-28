@@ -30,7 +30,8 @@ private:
 	
 	VertexBuffer* vertexBuffer = nullptr;
 	IndexBuffer* indexBuffer = nullptr;
-	ConstantBuffer* constantBuffer = nullptr;
+	ConstantBuffer* objectCB = nullptr;
+	ConstantBuffer* cameraCB = nullptr;
 	ID3D11RasterizerState* rasterizerState = nullptr;
 
 	VertexShader* vertexShader = nullptr;
