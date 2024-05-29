@@ -6,7 +6,7 @@ HRESULT IndexBuffer::Create(ID3D11Device* device, const vector<UINT>& indices)
 	HRESULT hr = S_OK;
 
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.ByteWidth = sizeof(UINT) * indices.size();
+	bufferDesc.ByteWidth = sizeof(UINT) * static_cast<UINT>(indices.size());
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0u;

@@ -1,8 +1,8 @@
 #pragma once
-#include "../Shader/VertexShader.h"
-#include "../Shader/PixelShader.h"
+#include "../Shader/Shader.h"
 #include "../Texture/Texture.h"
-#include "../Shader/Buffer/Buffer.h"
+#include "../Buffer/Buffer.h"
+#include "../Camera/Camera.h"
 
 class Renderer final
 {
@@ -37,4 +37,6 @@ private:
 	VertexShader* vertexShader = nullptr;
 	PixelShader* pixelShader = nullptr;
 	Texture* texture = nullptr;
+
+	Camera* camera = nullptr;
 };

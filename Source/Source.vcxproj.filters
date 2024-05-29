@@ -19,9 +19,9 @@
       <Filter>Window</Filter>
     </ClCompile>
     <ClCompile Include="Texture\Texture.cpp" />
-    <ClCompile Include="Shader\Buffer\VertexBuffer.cpp" />
-    <ClCompile Include="Shader\Buffer\IndexBuffer.cpp" />
-    <ClCompile Include="Shader\Buffer\ConstantBuffer.cpp" />
+    <ClCompile Include="Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="Buffer\IndexBuffer.cpp" />
+    <ClCompile Include="Buffer\ConstantBuffer.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -46,12 +46,13 @@
     </ClInclude>
     <ClInclude Include="DataType.h" />
     <ClInclude Include="Texture\Texture.h" />
-    <ClInclude Include="Shader\Buffer\VertexBuffer.h" />
-    <ClInclude Include="Shader\Buffer\BaseBuffer.h" />
-    <ClInclude Include="Shader\Buffer\IndexBuffer.h" />
-    <ClInclude Include="Shader\Buffer\Buffer.h" />
-    <ClInclude Include="Shader\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="Buffer\VertexBuffer.h" />
+    <ClInclude Include="Buffer\BaseBuffer.h" />
+    <ClInclude Include="Buffer\IndexBuffer.h" />
+    <ClInclude Include="Buffer\Buffer.h" />
+    <ClInclude Include="Buffer\ConstantBuffer.h" />
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Shader\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">

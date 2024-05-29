@@ -18,6 +18,8 @@ Renderer::Renderer()
 	cameraCB = new ConstantBuffer();
 
 	texture = new Texture(L"Resources/Textures/Tottenham_Hotspur.png");
+
+	camera = new Camera();
 }
 
 // (TODO) ComPtr로 변환하기
@@ -107,6 +109,13 @@ Renderer::~Renderer()
 		delete texture;
 		texture = nullptr;
 	}
+
+	// Delete Camera
+	if (camera != nullptr)
+	{
+		delete camera;
+		camera = nullptr;
+	}
 }
 
 // Initialize SwapChain, Device, RTV, DSV, Viewport
@@ -116,7 +125,6 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 
 	// Initialize SwapChain description
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-	// ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 	swapChainDesc.BufferDesc.Width = width;
 	swapChainDesc.BufferDesc.Height = height;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1u;
@@ -147,7 +155,6 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 		&device,
 		nullptr, // [out] device에서 지원하는 feature level
 		&context);
-
 	if (FAILED(hr))
 	{
 		DebugLog("D3D11CreateDeviceAndSwapChain Failed");
@@ -179,7 +186,6 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 
 	// Create depth stencil buffer 
 	D3D11_TEXTURE2D_DESC depthStencilBufferDesc = {};
-	//ZeroMemory(&depthStencilBufferDesc, sizeof(depthStencilBufferDesc));
 	depthStencilBufferDesc.Width = width;
 	depthStencilBufferDesc.Height = height;
 	depthStencilBufferDesc.MipLevels = 1u;
@@ -319,12 +325,18 @@ HRESULT Renderer::InitializeScene()
 		0, 2, 3
 	};
 
-	ObjectCB testObjectCB = {};
-	testObjectCB.worldMatrix = XMMatrixIdentity();
+	XMVECTOR testMoveVector = { 0.0f, 0.0f, -0.1f };
+	camera->Initialize();
+	camera->Move(testMoveVector);
+	//camera->Update();
 
-	CameraCB testCameraCB = {};
+	ObjectCB testObjectCB = {};
+	testObjectCB.worldMatrix = camera->GetViewMatrix();
+
+
+	/*CameraCB testCameraCB = {};
 	testCameraCB.projMatrix = XMMatrixIdentity();
-	testCameraCB.viewMatrix = XMMatrixIdentity();
+	testCameraCB.viewMatrix = camera->GetViewMatrix();*/
 
 	hr = vertexBuffer->Create(device, testVertex);
 	if (FAILED(hr))
@@ -354,19 +366,20 @@ HRESULT Renderer::InitializeScene()
 		return hr;
 	}
 
-	hr = cameraCB->Create(device, sizeof(testCameraCB));
-	if (FAILED(hr))
-	{
-		DebugLog("Create Constant buffer Failed");
-		return hr;
-	}
+	//hr = cameraCB->Create(device, sizeof(testCameraCB));
+	//if (FAILED(hr))
+	//{
+	//	DebugLog("Create Constant buffer Failed");
+	//	return hr;
+	//}
 
-	hr = cameraCB->SetData(context, &testCameraCB, sizeof(testCameraCB));
-	if (FAILED(hr))
-	{
-		DebugLog("Constant buffer SetData Failed");
-		return hr;
-	}
+	//hr = cameraCB->SetData(context, &testCameraCB, sizeof(testCameraCB));
+	//if (FAILED(hr))
+	//{
+	//	DebugLog("Constant buffer SetData Failed");
+	//	return hr;
+	//}
+
 	return hr;
 }
 
@@ -404,7 +417,7 @@ HRESULT Renderer::Render()
 	vertexBuffer->Bind(context);
 	indexBuffer->Bind(context);
 	objectCB->Bind(context, 0u);
-	cameraCB->Bind(context, 1u);
+	//cameraCB->Bind(context, 1u);
 
 	context->DrawIndexed(6u, 0u, 0);
 
