@@ -16,7 +16,7 @@ public:
 	bool ProcessMessage();
 	void Update();
 	void Render();
-protected:
+
 private:
 	Window* window = nullptr;
 	Renderer* renderer = nullptr;

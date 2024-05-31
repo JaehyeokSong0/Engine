@@ -170,6 +170,8 @@
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="InputSystem\Keyboard\KeyboardManager.cpp" />
+    <ClCompile Include="InputSystem\Mouse\MouseManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PCH\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,6 +193,9 @@
     <ClInclude Include="Buffer\BaseBuffer.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="InputSystem\InputSystem.h" />
+    <ClInclude Include="InputSystem\Keyboard\KeyboardManager.h" />
+    <ClInclude Include="InputSystem\Mouse\MouseManager.h" />
     <ClInclude Include="PCH\stdafx.h" />
     <ClInclude Include="DataType.h" />
     <ClInclude Include="Renderer\Renderer.h" />
@@ -245,9 +250,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\Textures\Tottenham_Hotspur.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

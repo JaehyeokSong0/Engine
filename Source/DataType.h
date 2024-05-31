@@ -15,13 +15,9 @@ struct Vertex
 	XMFLOAT2 texCoord;
 };
 
-struct ObjectCB
+struct TransformCB
 {
-	XMMATRIX worldMatrix;
-};
-
-struct CameraCB
-{
-	XMMATRIX viewMatrix;
-	XMMATRIX projMatrix;
+	XMMATRIX worldMatrix; // object -> world
+	XMMATRIX viewMatrix; // world -> camera
+	XMMATRIX projectionMatrix; // camera -> clip
 };

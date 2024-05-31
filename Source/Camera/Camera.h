@@ -6,6 +6,7 @@
 */
 
 const XMFLOAT3 XMFLOAT3_ZERO= XMFLOAT3(0.0f, 0.0f, 0.0f);
+const XMVECTOR XMVECTOR_ZERO = { 0.0f, 0.0f, 0.0f };
 const XMVECTOR DEFAULT_EYE = { 0.0f, 0.0f, 0.0f };
 const XMVECTOR DEFAULT_AT = { 0.0f, 0.0f, 1.0f };
 const XMVECTOR DEFAULT_UP = { 0.0f, 1.0f, 0.0f };
@@ -16,16 +17,17 @@ public:
 	Camera();
 	~Camera() = default;
 
-	void Initialize(XMVECTOR position = DEFAULT_EYE, XMVECTOR rotation = DEFAULT_AT);
-	void Update();
+	void Initialize(XMVECTOR position = XMVECTOR_ZERO, XMVECTOR rotation = XMVECTOR_ZERO);
 
 	void SetPosition(XMFLOAT3 position);
 	void SetPosition(XMVECTOR position);
 	void SetRotation(XMFLOAT3 rotation);
 	void SetRotation(XMVECTOR rotation);
+	void SetProjectionValues(float fovY, float aspect, float nearZ, float farZ);
 
-	const XMMATRIX GetViewMatrix() const;
 	const XMMATRIX GetRotationMatrix() const;
+	const XMMATRIX GetViewMatrix() const;
+	const XMMATRIX GetProjectionMatrix() const;
 
 	// Input parameter만큼 transform update
 	void Move(XMVECTOR inputPos);
@@ -35,18 +37,27 @@ public:
 
 private:
 	XMFLOAT3 position;
-	XMFLOAT3 rotation;
+	XMFLOAT3 rotation; // use radian
 
 	XMVECTOR positionVector;
 	XMVECTOR rotationVector;
 
-	XMMATRIX viewMatrix;
+	// world space parameters
+	XMVECTOR eye;
+	XMVECTOR at;
+	XMVECTOR up;
+
+	// camera space parameters
+	float fovY;
+	float aspect; 
+	float nearZ;
+	float farZ;
+
 	XMMATRIX rotationMatrix;
-	XMMATRIX projectionMatrix;
+	XMMATRIX viewMatrix; // camera space basis matrix
+	XMMATRIX projectionMatrix; // clip space basis matrix
 
-	void UpdateViewMatrix();
 	void UpdateRotationMatrix();
+	void UpdateViewMatrix(); 
+	void UpdateProjectionMatrix();
 };
-
-
-// TODO : SetProjectionMatrix.. 아마

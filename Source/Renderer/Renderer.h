@@ -17,9 +17,12 @@ public:
 
 	HRESULT InitializeShaders();
 
-	VertexBuffer* GetVertexBuffer() const;
+	Camera* GetCamera();
 
 private:
+	int width;
+	int height;
+
 	ID3D11Device* device = nullptr;
 	ID3D11DeviceContext* context = nullptr;
 	IDXGISwapChain* swapChain = nullptr;
@@ -30,8 +33,7 @@ private:
 	
 	VertexBuffer* vertexBuffer = nullptr;
 	IndexBuffer* indexBuffer = nullptr;
-	ConstantBuffer* objectCB = nullptr;
-	ConstantBuffer* cameraCB = nullptr;
+	ConstantBuffer* constantBuffer = nullptr; // (TODO) Rename later
 	ID3D11RasterizerState* rasterizerState = nullptr;
 
 	VertexShader* vertexShader = nullptr;

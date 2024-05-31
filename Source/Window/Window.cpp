@@ -1,6 +1,20 @@
 #include <stdafx.h>
 #include "Window.h"
 
+Window::~Window()
+{
+    if (mouse != nullptr)
+    {
+        delete mouse;
+        mouse = nullptr;
+    }
+    if (keyboard != nullptr)
+    {
+        delete keyboard;
+        keyboard = nullptr;
+    }
+}
+
 HWND Window::GetHandle() const
 {
     return this->hWnd;
@@ -27,6 +41,38 @@ LRESULT Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             DebugLog("WindowProc: WM_DESTROY");
             PostQuitMessage(0);
             return 0;
+        case WM_ACTIVATEAPP:
+            Mouse::ProcessMessage(uMsg, wParam, lParam);
+            Keyboard::ProcessMessage(uMsg, wParam, lParam);
+            return 0;
+#pragma region MouseEvent
+        case WM_ACTIVATE:
+        case WM_INPUT:
+        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_MOUSEHOVER:
+#pragma endregion MouseEvent
+        {
+            Mouse::ProcessMessage(uMsg, wParam, lParam);
+            return 0;
+        }
+#pragma region KeyboardEvent
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+#pragma endregion KeyboardEvent
+        {
+            Keyboard::ProcessMessage(uMsg, wParam, lParam);
+            return 0;
+        }
         default:
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -50,7 +96,7 @@ HRESULT Window::Initialize(
         DebugLog("RegisterWindow Failed");
         return hr;
     }
-
+    
     // Resize window
     DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
     int centerScreenX = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
@@ -88,7 +134,20 @@ HRESULT Window::Initialize(
     ShowWindow(this->hWnd, SW_SHOW);
     UpdateWindow(this->hWnd);
 
+    mouse = new MouseManager(hWnd);
+    keyboard = new KeyboardManager();
+
     return hr;
+}
+
+MouseManager* Window::GetMouse() const
+{
+    return this->mouse;
+}
+
+KeyboardManager* Window::GetKeyboard() const
+{
+    return this->keyboard;
 }
 
 HRESULT Window::RegisterWindow() const

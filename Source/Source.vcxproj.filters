@@ -23,6 +23,8 @@
     <ClCompile Include="Buffer\IndexBuffer.cpp" />
     <ClCompile Include="Buffer\ConstantBuffer.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="InputSystem\Mouse\MouseManager.cpp" />
+    <ClCompile Include="InputSystem\Keyboard\KeyboardManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -53,6 +55,9 @@
     <ClInclude Include="Buffer\ConstantBuffer.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="InputSystem\InputSystem.h" />
+    <ClInclude Include="InputSystem\Mouse\MouseManager.h" />
+    <ClInclude Include="InputSystem\Keyboard\KeyboardManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">
@@ -71,8 +76,5 @@
   <ItemGroup>
     <FxCompile Include="Shader\VertexShader.hlsl" />
     <FxCompile Include="Shader\PixelShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\Textures\Tottenham_Hotspur.png" />
   </ItemGroup>
 </Project>

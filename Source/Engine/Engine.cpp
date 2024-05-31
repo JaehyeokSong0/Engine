@@ -70,6 +70,18 @@ bool Engine::ProcessMessage()
 			return false;
 		}
 		
+		if (message.message == WM_LBUTTONUP)
+		{
+			window->GetMouse()->AlterMouseMode();
+		}
+
+		if (message.message == WM_MOUSEMOVE)
+		{
+			MouseRelativeMove mouseMove = window->GetMouse()->GetMouseDragState();
+			XMFLOAT3 relativePos = XMFLOAT3(static_cast<float>(mouseMove.x) / 10.0f, static_cast<float>(mouseMove.y) / 10.0f, 0.0f);
+			
+			renderer->GetCamera()->Move(relativePos);
+		}
 		TranslateMessage(&message);
 		DispatchMessage(&message);
 	}

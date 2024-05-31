@@ -8,16 +8,16 @@ D3D_FEATURE_LEVEL featureLevels[] =
 };
 
 Renderer::Renderer()
+	: width(800), height(600)
 {
 	vertexShader = new VertexShader();
 	pixelShader = new PixelShader();
-	
+
 	vertexBuffer = new VertexBuffer();
 	indexBuffer = new IndexBuffer();
-	objectCB = new ConstantBuffer();
-	cameraCB = new ConstantBuffer();
+	constantBuffer = new ConstantBuffer();
 
-	texture = new Texture(L"Resources/Textures/Tottenham_Hotspur.png");
+	texture = new Texture(L"Resources/Textures/cheems.png");
 
 	camera = new Camera();
 }
@@ -75,7 +75,7 @@ Renderer::~Renderer()
 	}
 
 	// Delete buffers
-	if (vertexBuffer!= nullptr)
+	if (vertexBuffer != nullptr)
 	{
 		delete vertexBuffer;
 		vertexBuffer = nullptr;
@@ -83,19 +83,14 @@ Renderer::~Renderer()
 	if (indexBuffer != nullptr)
 	{
 		delete indexBuffer;
-		indexBuffer = nullptr; 
+		indexBuffer = nullptr;
 	}
-	if (objectCB!= nullptr)
+	if (constantBuffer != nullptr)
 	{
-		delete objectCB;
-		objectCB = nullptr;
+		delete constantBuffer;
+		constantBuffer = nullptr;
 	}
-	if (cameraCB != nullptr)
-	{
-		delete cameraCB;
-		cameraCB = nullptr;
-	}
-	
+
 	// Delete Rasterizer
 	if (rasterizerState != nullptr)
 	{
@@ -122,6 +117,9 @@ Renderer::~Renderer()
 HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 {
 	HRESULT hr = S_OK;
+
+	this->width = width;
+	this->height = height;
 
 	// Initialize SwapChain description
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -266,6 +264,11 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 
 	// Initialize texture
 	hr = texture->Initialize(device, context);
+	if (FAILED(hr))
+	{
+		DebugLog("Texture initialization Failed");
+		return hr;
+	}
 
 	// Set Shaders
 	hr = InitializeShaders();
@@ -306,6 +309,11 @@ HRESULT Renderer::InitializeShaders()
 	return hr;
 }
 
+Camera* Renderer::GetCamera()
+{
+	return this->camera;
+}
+
 HRESULT Renderer::InitializeScene()
 {
 	HRESULT hr = S_OK;
@@ -318,25 +326,36 @@ HRESULT Renderer::InitializeScene()
 		Vertex(XMFLOAT3(0.5f, 0.5f, 1.0f), XMFLOAT2(1.0f, 0.0f)),
 		Vertex(XMFLOAT3(0.5f, -0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f))
 	};
-
 	vector<UINT> testIndex =
 	{
 		0, 1, 2,
 		0, 2, 3
 	};
+	XMVECTOR testMoveVector = { -0.1f, 0.0f, 0.0f };
+	XMFLOAT3 testMoveFloat3 = XMFLOAT3(-0.1f, 0.0f, 0.0f);
 
-	XMVECTOR testMoveVector = { 0.0f, 0.0f, -0.1f };
-	camera->Initialize();
+	XMVECTOR testRotationVector = { 0 , XM_PI / 8 , 0};
+	
+	TransformCB testCB = {};
+
+	camera->Initialize(); // Initialize transform with parameter(XMVECTOR position = ZeroVector, XMVECTOR rotation = ZeroVector).
+	camera->Rotate(testRotationVector);
+
 	camera->Move(testMoveVector);
-	//camera->Update();
+	camera->Move(testMoveFloat3);
+	camera->Move(testMoveFloat3);
+	camera->Move(testMoveFloat3);
+	camera->Move(testMoveFloat3);
+	camera->Move(testMoveFloat3);
+	camera->Move(testMoveFloat3);
 
-	ObjectCB testObjectCB = {};
-	testObjectCB.worldMatrix = camera->GetViewMatrix();
 
+	camera->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
 
-	/*CameraCB testCameraCB = {};
-	testCameraCB.projMatrix = XMMatrixIdentity();
-	testCameraCB.viewMatrix = camera->GetViewMatrix();*/
+	// DirectX use row-major matrix, otherwise HLSL use coloum-major matrix -> Transpose
+	testCB.worldMatrix = XMMatrixIdentity();
+	testCB.viewMatrix = XMMatrixTranspose(camera->GetViewMatrix());
+	testCB.projectionMatrix = XMMatrixTranspose(camera->GetProjectionMatrix());
 
 	hr = vertexBuffer->Create(device, testVertex);
 	if (FAILED(hr))
@@ -351,34 +370,20 @@ HRESULT Renderer::InitializeScene()
 		DebugLog("Create Index buffer Failed");
 		return hr;
 	}
-	
-	hr = objectCB->Create(device, sizeof(testObjectCB));
+
+	hr = constantBuffer->Create(device, sizeof(testCB));
 	if (FAILED(hr))
 	{
 		DebugLog("Create Constant buffer Failed");
 		return hr;
 	}
 
-	hr = objectCB->SetData(context, &testObjectCB, sizeof(testObjectCB));
+	hr = constantBuffer->SetData(context, &testCB, sizeof(testCB));
 	if (FAILED(hr))
 	{
 		DebugLog("Constant buffer SetData Failed");
 		return hr;
 	}
-
-	//hr = cameraCB->Create(device, sizeof(testCameraCB));
-	//if (FAILED(hr))
-	//{
-	//	DebugLog("Create Constant buffer Failed");
-	//	return hr;
-	//}
-
-	//hr = cameraCB->SetData(context, &testCameraCB, sizeof(testCameraCB));
-	//if (FAILED(hr))
-	//{
-	//	DebugLog("Constant buffer SetData Failed");
-	//	return hr;
-	//}
 
 	return hr;
 }
@@ -388,7 +393,7 @@ HRESULT Renderer::Render()
 	HRESULT hr = S_OK;
 
 	// TEST CODE
-	float testBgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float testBgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	context->ClearRenderTargetView(renderTargetView, testBgColor);
 	UINT clearFlags = D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL;
@@ -398,7 +403,6 @@ HRESULT Renderer::Render()
 		1.0f, // Value to clear depth
 		0u // Value to clear stencil
 	);
-
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	context->IASetInputLayout(vertexShader->GetInputLayout());
@@ -408,16 +412,12 @@ HRESULT Renderer::Render()
 	context->RSSetState(rasterizerState);
 	context->OMSetDepthStencilState(depthStencilState, 0u);
 
-	UINT offset = 0;
-	UINT stride = sizeof(Vertex);
-
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
 	vertexBuffer->Bind(context);
 	indexBuffer->Bind(context);
-	objectCB->Bind(context, 0u);
-	//cameraCB->Bind(context, 1u);
+	constantBuffer->Bind(context, 0u);
 
 	context->DrawIndexed(6u, 0u, 0);
 
@@ -429,11 +429,4 @@ HRESULT Renderer::Render()
 	}
 
 	return hr;
-}
-
-
-
-VertexBuffer* Renderer::GetVertexBuffer() const
-{
-	return this->vertexBuffer;
 }
