@@ -333,29 +333,11 @@ HRESULT Renderer::InitializeScene()
 	};
 	XMVECTOR testMoveVector = { -0.1f, 0.0f, 0.0f };
 	XMFLOAT3 testMoveFloat3 = XMFLOAT3(-0.1f, 0.0f, 0.0f);
-
 	XMVECTOR testRotationVector = { 0 , XM_PI / 8 , 0};
 	
-	TransformCB testCB = {};
-
 	camera->Initialize(); // Initialize transform with parameter(XMVECTOR position = ZeroVector, XMVECTOR rotation = ZeroVector).
-	camera->Rotate(testRotationVector);
-
-	camera->Move(testMoveVector);
-	camera->Move(testMoveFloat3);
-	camera->Move(testMoveFloat3);
-	camera->Move(testMoveFloat3);
-	camera->Move(testMoveFloat3);
-	camera->Move(testMoveFloat3);
-	camera->Move(testMoveFloat3);
-
 
 	camera->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
-
-	// DirectX use row-major matrix, otherwise HLSL use coloum-major matrix -> Transpose
-	testCB.worldMatrix = XMMatrixIdentity();
-	testCB.viewMatrix = XMMatrixTranspose(camera->GetViewMatrix());
-	testCB.projectionMatrix = XMMatrixTranspose(camera->GetProjectionMatrix());
 
 	hr = vertexBuffer->Create(device, testVertex);
 	if (FAILED(hr))
@@ -371,17 +353,10 @@ HRESULT Renderer::InitializeScene()
 		return hr;
 	}
 
-	hr = constantBuffer->Create(device, sizeof(testCB));
+	hr = constantBuffer->Create(device, sizeof(TransformCB));
 	if (FAILED(hr))
 	{
 		DebugLog("Create Constant buffer Failed");
-		return hr;
-	}
-
-	hr = constantBuffer->SetData(context, &testCB, sizeof(testCB));
-	if (FAILED(hr))
-	{
-		DebugLog("Constant buffer SetData Failed");
 		return hr;
 	}
 
@@ -404,6 +379,20 @@ HRESULT Renderer::Render()
 		0u // Value to clear stencil
 	);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	// DirectX use row-major matrix, otherwise HLSL use coloum-major matrix -> Transpose
+	TransformCB transformCB = {};
+	transformCB.worldMatrix = XMMatrixIdentity();
+	transformCB.viewMatrix = XMMatrixTranspose(camera->GetViewMatrix());
+	transformCB.projectionMatrix = XMMatrixTranspose(camera->GetProjectionMatrix());
+
+	hr = constantBuffer->SetData(context, &transformCB, sizeof(transformCB));
+	if (FAILED(hr))
+	{
+		DebugLog("Constant buffer SetData Failed");
+		return hr;
+	}
 
 	context->IASetInputLayout(vertexShader->GetInputLayout());
 	context->VSSetShader(vertexShader->GetVertexShader(), NULL, 0u);

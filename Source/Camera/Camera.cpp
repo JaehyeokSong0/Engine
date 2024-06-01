@@ -12,10 +12,23 @@ XMFLOAT3 operator+(const XMFLOAT3 lhs, const XMFLOAT3 rhs)
 	return ret;
 }
 
+XMFLOAT3 operator*(const XMFLOAT3 lhs, const float rhs)
+{
+	XMFLOAT3 ret(XMFLOAT3_ZERO);
+
+	ret.x = lhs.x * rhs;
+	ret.y = lhs.y * rhs;
+	ret.z = lhs.z * rhs;
+
+	return ret;
+}
+
 Camera::Camera()
 	: position(XMFLOAT3_ZERO), rotation(XMFLOAT3_ZERO)
 	, positionVector(XMLoadFloat3(&position))
 	, rotationVector(XMLoadFloat3(&rotation))
+	, moveSpeed(DEFAULT_MOVE_SPEED)
+	, rotateSpeed(DEFAULT_ROTATE_SPEED)
 	, eye(DEFAULT_EYE)
 	, at(DEFAULT_AT)
 	, up(DEFAULT_UP)
@@ -71,6 +84,26 @@ void Camera::SetProjectionValues(float fovY, float aspect, float nearZ, float fa
 	UpdateProjectionMatrix();
 }
 
+float Camera::GetMoveSpeed()
+{
+	return moveSpeed;
+}
+
+void Camera::SetMoveSpeed(float value)
+{
+	moveSpeed = value;
+}
+
+float Camera::GetRotateSpeed()
+{
+	return rotateSpeed;
+}
+
+void Camera::SetRotateSpeed(float value)
+{
+	rotateSpeed = value;
+}
+
 const XMMATRIX Camera::GetRotationMatrix() const
 {
 	return rotationMatrix;
@@ -88,30 +121,31 @@ const XMMATRIX Camera::GetProjectionMatrix() const
 
 void Camera::Move(XMVECTOR inputPos)
 {
-	cout << inputPos.m128_f32[0] << "," << inputPos.m128_f32[1] << "," << inputPos.m128_f32[2] << "\n";
-	positionVector = XMVectorAdd(positionVector, inputPos);
+	//cout << inputPos.m128_f32[0] << "," << inputPos.m128_f32[1] << "," << inputPos.m128_f32[2] << "\n";
+	positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
 	XMStoreFloat3(&position, positionVector);
 	UpdateViewMatrix();
 }
 
 void Camera::Move(XMFLOAT3 inputPos)
 {
-	cout << inputPos.x << "," << inputPos.y << "," << inputPos.z << "\n";
-	position = position + inputPos;
+	//cout << inputPos.x << "," << inputPos.y << "," << inputPos.z << "\n";
+	position = position + inputPos * moveSpeed;
 	positionVector = XMLoadFloat3(&position);
 	UpdateViewMatrix();
 }
 
 void Camera::Rotate(XMVECTOR inputRot)
 {
-	rotationVector = XMVectorAdd(rotationVector, inputRot);
+	rotationVector = XMVectorAdd(rotationVector, inputRot * rotateSpeed);
 	XMStoreFloat3(&rotation, rotationVector);
 	UpdateRotationMatrix();
 }
 
 void Camera::Rotate(XMFLOAT3 inputRot)
 {
-	rotation = rotation + inputRot;
+	//cout << inputRot.x << "," << inputRot.y << "," << inputRot.z << "\n";
+	rotation = rotation + inputRot * rotateSpeed;
 	rotationVector = XMLoadFloat3(&rotation);
 	UpdateRotationMatrix();
 }

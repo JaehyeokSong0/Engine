@@ -136,6 +136,8 @@ HRESULT Window::Initialize(
 
     mouse = new MouseManager(hWnd);
     keyboard = new KeyboardManager();
+    
+    SetCursorPos(centerScreenX + width / 2, centerScreenY + height / 2);
 
     return hr;
 }

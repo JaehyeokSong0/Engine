@@ -4,6 +4,8 @@
 MouseManager::MouseManager(HWND hwnd)
 	: mouse(make_unique<Mouse>())
 	, currMode(DEFAULT_MOUSE_MODE)
+	, x(0) , y(0)
+	, sensitivity(DEFAULT_SENSITIVITY)
 {
 	mouse->SetWindow(hwnd);
 	SetMouseMode(currMode);
@@ -19,6 +21,16 @@ void MouseManager::AlterMouseMode()
 	currMode = (currMode == Mouse::MODE_ABSOLUTE) ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE;
 
 	mouse->SetMode(currMode);
+}
+
+void MouseManager::SetSensitivity(float value)
+{
+	sensitivity = value;
+}
+
+float MouseManager::GetSensitivity()
+{
+	return sensitivity;
 }
 
 Mouse::State MouseManager::GetMouseState()

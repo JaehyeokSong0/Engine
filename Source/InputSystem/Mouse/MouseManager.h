@@ -8,16 +8,20 @@ struct MouseRelativeMove
 	int y;
 };
 
+const Mouse::Mode DEFAULT_MOUSE_MODE = Mouse::MODE_ABSOLUTE;
+const float DEFAULT_SENSITIVITY = 0.1f;
+	
 class MouseManager
 {
-	const Mouse::Mode DEFAULT_MOUSE_MODE = Mouse::MODE_ABSOLUTE;
-	
 public:
 	MouseManager(HWND hwnd);
 	~MouseManager() = default;
 	
 	void SetMouseMode(Mouse::Mode mode);
 	void AlterMouseMode();
+
+	void SetSensitivity(float value);
+	float GetSensitivity();
 
 	Mouse::State GetMouseState();
 	MouseRelativeMove GetMouseDragState();
@@ -27,6 +31,8 @@ private:
 	Mouse::Mode currMode;
 
 	// position
-	int x = 0;
-	int y = 0;
+	int x;
+	int y;
+
+	float sensitivity;
 };

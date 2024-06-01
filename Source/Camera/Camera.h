@@ -11,6 +11,9 @@ const XMVECTOR DEFAULT_EYE = { 0.0f, 0.0f, 0.0f };
 const XMVECTOR DEFAULT_AT = { 0.0f, 0.0f, 1.0f };
 const XMVECTOR DEFAULT_UP = { 0.0f, 1.0f, 0.0f };
 
+const float DEFAULT_MOVE_SPEED = 0.1f;
+const float DEFAULT_ROTATE_SPEED = 0.1f;
+
 class Camera final
 {
 public:
@@ -24,6 +27,11 @@ public:
 	void SetRotation(XMFLOAT3 rotation);
 	void SetRotation(XMVECTOR rotation);
 	void SetProjectionValues(float fovY, float aspect, float nearZ, float farZ);
+
+	float GetMoveSpeed();
+	void SetMoveSpeed(float value);
+	float GetRotateSpeed();
+	void SetRotateSpeed(float value);
 
 	const XMMATRIX GetRotationMatrix() const;
 	const XMMATRIX GetViewMatrix() const;
@@ -41,6 +49,9 @@ private:
 
 	XMVECTOR positionVector;
 	XMVECTOR rotationVector;
+
+	float moveSpeed;
+	float rotateSpeed;
 
 	// world space parameters
 	XMVECTOR eye;

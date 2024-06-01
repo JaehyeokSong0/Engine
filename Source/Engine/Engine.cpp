@@ -26,7 +26,7 @@ HRESULT Engine::Initialize(
 	int width, int height)
 {
 	HRESULT hr = S_OK;
-	
+
 	hr = window->Initialize(hInstance, className, windowName, width, height);
 	if (FAILED(hr))
 	{
@@ -66,25 +66,51 @@ bool Engine::ProcessMessage()
 	{
 		if (message.message == WM_QUIT)
 		{
-			DebugLog("ProcessMessage: WM_QUIT");
 			return false;
 		}
-		
+
 		if (message.message == WM_LBUTTONUP)
 		{
-			window->GetMouse()->AlterMouseMode();
+			//TEST CODE
+			//window->GetMouse()->AlterMouseMode();
+			window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() + 0.1f);
 		}
 
 		if (message.message == WM_MOUSEMOVE)
 		{
 			MouseRelativeMove mouseMove = window->GetMouse()->GetMouseDragState();
-			XMFLOAT3 relativePos = XMFLOAT3(static_cast<float>(mouseMove.x) / 10.0f, static_cast<float>(mouseMove.y) / 10.0f, 0.0f);
-			
-			renderer->GetCamera()->Move(relativePos);
+			float mouseSensitivity = window->GetMouse()->GetSensitivity();
+			XMFLOAT3 relativeRot
+				= XMFLOAT3(
+					static_cast<float>(mouseMove.y) * mouseSensitivity * -1.0f,
+					static_cast<float>(mouseMove.x) * mouseSensitivity,
+					0.0f
+				);
+
+			// TEST CODE
+			renderer->GetCamera()->Rotate(relativeRot);
 		}
+
+		if ((message.message == WM_KEYUP) || (message.message == WM_KEYDOWN))
+		{
+			auto kb = window->GetKeyboard()->GetKeyboardState();
+
+			// TEST CODE
+			if (kb.W)
+				renderer->GetCamera()->Move(XMFLOAT3(0.0f, 0.0f, 1.0f));
+			else if (kb.S)
+				renderer->GetCamera()->Move(XMFLOAT3(0.0f, 0.0f, -1.0f));
+
+			if (kb.A)
+				renderer->GetCamera()->Move(XMFLOAT3(-1.0f, 0.0f, 0.0f));
+			else if (kb.D)
+				renderer->GetCamera()->Move(XMFLOAT3(1.0f, 0.0f, 0.0f));
+		}
+
 		TranslateMessage(&message);
 		DispatchMessage(&message);
 	}
+
 	return true;
 }
 
