@@ -5,7 +5,6 @@ HRESULT ConstantBuffer::Create(ID3D11Device* device, UINT size)
 {
 	HRESULT hr = S_OK;
 
-	// CHECK ? dx10 이후로는 필요없나
 	if (size % 16 != 0)
 		size = ((size / 16) + 1) * 16;
 

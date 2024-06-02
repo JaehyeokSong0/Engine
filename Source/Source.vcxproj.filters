@@ -25,6 +25,7 @@
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="InputSystem\Mouse\MouseManager.cpp" />
     <ClCompile Include="InputSystem\Keyboard\KeyboardManager.cpp" />
+    <ClCompile Include="Model\Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -58,6 +59,7 @@
     <ClInclude Include="InputSystem\InputSystem.h" />
     <ClInclude Include="InputSystem\Mouse\MouseManager.h" />
     <ClInclude Include="InputSystem\Keyboard\KeyboardManager.h" />
+    <ClInclude Include="Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">
