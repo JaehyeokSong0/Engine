@@ -9,6 +9,10 @@ ProjectE
 │   ├── Camera
 │   ├── Engine
 │   ├── Game
+│   └── InputSystem
+│       └── Keyboard
+│       └── Mouse
+│   ├── Model
 │   ├── PCH
 │   ├── Renderer
 │   └── Resources
