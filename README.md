@@ -7,12 +7,15 @@ ProjectE
 ├── Source
 │   ├── Buffer
 │   ├── Camera
+│   ├── Component
 │   ├── Engine
 │   ├── Game
 │   └── InputSystem
 │       └── Keyboard
 │       └── Mouse
 │   ├── Model
+│   ├── Object
+│   ├── Physics
 │   ├── PCH
 │   ├── Renderer
 │   └── Resources
@@ -35,5 +38,21 @@ ProjectE
 │       ├── Debug
 │       └── Release
 └── External
-    └── DirectXTK
+    ├── DirectXTK
+    │   ├── Include
+    │   └── Library
+    │       └── Win32
+    │           ├── Debug
+    │           └── Release
+    │       └── x64
+    │           ├── Debug
+    │           └── Release
+    └── Assimp
+        └── DLL
+            ├── Debug
+            └── Release
+        ├── Include
+        └── Library
+            ├── Debug
+            └── Release
 ```
