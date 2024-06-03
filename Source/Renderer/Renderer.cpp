@@ -8,7 +8,7 @@ D3D_FEATURE_LEVEL featureLevels[] =
 };
 
 Renderer::Renderer()
-	: width(800), height(600)
+	: width(800), height(600) // default width, height.
 {
 	vertexShader = new VertexShader();
 	pixelShader = new PixelShader();
@@ -17,7 +17,8 @@ Renderer::Renderer()
 	indexBuffer = new IndexBuffer();
 	constantBuffer = new ConstantBuffer();
 
-	texture = new Texture(L"Resources/Textures/cheems.png");
+	//texture = new Texture(L"Resources/Textures/cheems.png");
+	texture = new Texture();
 
 	camera = new Camera();
 }
@@ -262,14 +263,6 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 		return hr;
 	}
 
-	// Initialize texture
-	hr = texture->Initialize(device, context);
-	if (FAILED(hr))
-	{
-		DebugLog("Texture initialization Failed");
-		return hr;
-	}
-
 	// Set Shaders
 	hr = InitializeShaders();
 	if (FAILED(hr))
@@ -318,47 +311,12 @@ HRESULT Renderer::InitializeScene()
 {
 	HRESULT hr = S_OK;
 
-	// TEST CODE
-	vector<Vertex> testVertex =
-	{
-		Vertex(XMFLOAT3(-0.5f, -0.5f, 1.0f), XMFLOAT2(0.0f, 1.0f)),
-		Vertex(XMFLOAT3(-0.5f, 0.5f, 1.0f), XMFLOAT2(0.0f, 0.0f)),
-		Vertex(XMFLOAT3(0.5f, 0.5f, 1.0f), XMFLOAT2(1.0f, 0.0f)),
-		Vertex(XMFLOAT3(0.5f, -0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f))
-	};
-	vector<UINT> testIndex =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-	XMVECTOR testMoveVector = { -0.1f, 0.0f, 0.0f };
-	XMFLOAT3 testMoveFloat3 = XMFLOAT3(-0.1f, 0.0f, 0.0f);
-	XMVECTOR testRotationVector = { 0 , XM_PI / 8 , 0};
-	
 	camera->Initialize(); // Initialize transform with parameter(XMVECTOR position = ZeroVector, XMVECTOR rotation = ZeroVector).
-
 	camera->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
 
-	hr = vertexBuffer->Create(device, testVertex);
-	if (FAILED(hr))
-	{
-		DebugLog("Create Vertex buffer Failed");
-		return hr;
-	}
-
-	hr = indexBuffer->Create(device, testIndex);
-	if (FAILED(hr))
-	{
-		DebugLog("Create Index buffer Failed");
-		return hr;
-	}
-
-	hr = constantBuffer->Create(device, sizeof(TransformCB));
-	if (FAILED(hr))
-	{
-		DebugLog("Create Constant buffer Failed");
-		return hr;
-	}
+	// TEST CODE
+	testModel = new Model();
+	testModel->Initialize(device, context);
 
 	return hr;
 }
@@ -380,19 +338,7 @@ HRESULT Renderer::Render()
 	);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
-	// DirectX use row-major matrix, otherwise HLSL use coloum-major matrix -> Transpose
-	TransformCB transformCB = {};
-	transformCB.worldMatrix = XMMatrixIdentity();
-	transformCB.viewMatrix = XMMatrixTranspose(camera->GetViewMatrix());
-	transformCB.projectionMatrix = XMMatrixTranspose(camera->GetProjectionMatrix());
-
-	hr = constantBuffer->SetData(context, &transformCB, sizeof(transformCB));
-	if (FAILED(hr))
-	{
-		DebugLog("Constant buffer SetData Failed");
-		return hr;
-	}
+	testModel->UpdateMatrices(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 
 	context->IASetInputLayout(vertexShader->GetInputLayout());
 	context->VSSetShader(vertexShader->GetVertexShader(), NULL, 0u);
@@ -402,13 +348,9 @@ HRESULT Renderer::Render()
 	context->OMSetDepthStencilState(depthStencilState, 0u);
 
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
-	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
-	vertexBuffer->Bind(context);
-	indexBuffer->Bind(context);
-	constantBuffer->Bind(context, 0u);
-
-	context->DrawIndexed(6u, 0u, 0);
+	// TEST CODE
+	testModel->Update();
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음
 	if (FAILED(hr))

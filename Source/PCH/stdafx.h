@@ -8,6 +8,9 @@
 	#endif
 #endif
 
+#define ToString(Text) #Text
+#define ToWideString(Text) L#Text
+
 #include <Windows.h>
 #include <wrl.h>
 

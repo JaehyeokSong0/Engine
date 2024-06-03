@@ -49,6 +49,12 @@ HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
 	return hr;
 }
 
+HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, LPCWSTR textureFilePath)
+{
+	SetFilePath(textureFilePath);
+	return Initialize(device, context);
+}
+
 ID3D11SamplerState*& Texture::GetSamplerState() 
 {
 	return this->samplerState;
@@ -57,4 +63,9 @@ ID3D11SamplerState*& Texture::GetSamplerState()
 ID3D11ShaderResourceView*& Texture::GetTextureRV()
 {
 	return this->textureRV;
+}
+
+void Texture::SetFilePath(LPCWSTR textureFilePath)
+{
+	filePath = textureFilePath;
 }

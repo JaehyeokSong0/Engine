@@ -1,12 +1,12 @@
 #include <stdafx.h>
 #include "Component.h"
 
-Component::Component(const wstring type)
+Component::Component(const ComponentClass type)
 {
 	this->type = type;
 }
 
-const wstring Component::GetComponentType() const
+const ComponentClass Component::GetComponentType() const
 {
 	return type;
 }

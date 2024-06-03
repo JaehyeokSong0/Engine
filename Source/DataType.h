@@ -22,6 +22,11 @@ struct Vertex
 
 struct Transform
 {
+	Transform() = default;
+	Transform(const XMFLOAT3& position, const XMFLOAT3& rotation)
+		: position(position), rotation(rotation)
+	{}
+
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
 };

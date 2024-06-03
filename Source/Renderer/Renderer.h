@@ -3,6 +3,7 @@
 #include "../Texture/Texture.h"
 #include "../Buffer/Buffer.h"
 #include "../Camera/Camera.h"
+#include "../Model/Model.h" // TEST CODE
 
 class Renderer final
 {
@@ -41,4 +42,6 @@ private:
 	Texture* texture = nullptr;
 
 	Camera* camera = nullptr;
+
+	Model* testModel = nullptr;
 };

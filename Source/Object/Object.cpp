@@ -1,14 +1,21 @@
 #include <stdafx.h>
 #include "Object.h"
+#include "../Component/Component.h"
 
 Object::Object()
-	: transform(Transform(XMFLOAT3_ZERO, XMFLOAT3_ZERO))
 {
+	transform = new Transform(XMFLOAT3_ZERO, XMFLOAT3_ZERO);
 	components.clear();
 }
 
 Object::~Object()
 {
+	if (transform != nullptr)
+	{
+		delete transform;
+		transform = nullptr;
+	}
+
 	// Deallocate components
 	for (auto component : components)
 	{
@@ -28,9 +35,11 @@ void Object::Create()
 {
 }
 
-void Object::Create(Transform transform)
+void Object::Create(const Transform& transform)
 {
-	this->transform = transform;
+	//this->transform = transform;
+	this->transform->position = transform.position;
+	this->transform->rotation = transform.rotation;
 }
 
 void Object::Update()
@@ -61,6 +70,7 @@ bool Object::RemoveComponent(Component* removeComponent)
 	{
 		if (component != nullptr)
 		{
+			// (TODO) RTTI - need all hierarchy information
 			if (component->GetComponentType() == removeComponent->GetComponentType())
 			{
 				component->Destroy();
@@ -79,7 +89,7 @@ bool Object::RemoveComponent(Component* removeComponent)
 	return false;
 }
 
-bool Object::GetComponent(const wstring type, Component* outComponent)
+bool Object::GetComponent(const ComponentClass type, Component* outComponent)
 {
 	for (auto component : components)
 	{

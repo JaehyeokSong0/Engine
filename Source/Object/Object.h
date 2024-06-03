@@ -1,5 +1,8 @@
 #pragma once
-#include "../Component/Component.h"
+
+struct Transform;
+class Component;
+enum class ComponentClass;
 
 class Object
 {
@@ -8,14 +11,14 @@ public:
 	~Object();
 
 	void Create();
-	void Create(Transform transform);
+	void Create(const Transform& transform);
 	void Update(); // Check current components and update object's status
 
 	bool AddComponent(Component* newComponent);
 	bool RemoveComponent(Component* removeComponent);
-	bool GetComponent(const wstring type, Component* outComponent = nullptr);
+	bool GetComponent(const ComponentClass type, Component* outComponent = nullptr);
 
 private:
-	Transform transform;
+	Transform* transform;
 	vector<Component*> components;
 };
