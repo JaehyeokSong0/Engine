@@ -72,28 +72,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(SolutionDir)External\Assimp\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(SolutionDir)External\Assimp\Library\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(SolutionDir)External\Assimp\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(SolutionDir)External\Assimp\Library\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(SolutionDir)External\Assimp\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(SolutionDir)External\Assimp\Library\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)External\DirectXTK\Include;$(SolutionDir)External\Assimp\Include;$(ProjectDir)PCH\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)External\DirectXTK\Library\$(Platform)\$(Configuration);$(SolutionDir)External\Assimp\Library\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,8 +108,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy "$(SolutionDir)External\Assimp\DLL\$(Configuration)" "$(SolutionDir)Build\$(Platform)\$(Configuration)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -128,8 +131,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy "$(SolutionDir)External\Assimp\DLL\$(Configuration)" "$(SolutionDir)Build\$(Platform)\$(Configuration)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -144,8 +150,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy "$(SolutionDir)External\Assimp\DLL\$(Configuration)" "$(SolutionDir)Build\$(Platform)\$(Configuration)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -164,8 +173,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;d3dcompiler.lib;dxgi.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy "$(SolutionDir)External\Assimp\DLL\$(Configuration)" "$(SolutionDir)Build\$(Platform)\$(Configuration)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
