@@ -121,17 +121,20 @@ const XMMATRIX Camera::GetProjectionMatrix() const
 
 void Camera::Move(XMVECTOR inputPos)
 {
-	//cout << inputPos.m128_f32[0] << "," << inputPos.m128_f32[1] << "," << inputPos.m128_f32[2] << "\n";
-	positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
+	positionVector = XMVectorAdd(positionVector, XMVector3Transform(inputPos * moveSpeed, rotationMatrix));
 	XMStoreFloat3(&position, positionVector);
+
+	//positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
 	UpdateViewMatrix();
 }
 
 void Camera::Move(XMFLOAT3 inputPos)
 {
-	//cout << inputPos.x << "," << inputPos.y << "," << inputPos.z << "\n";
-	position = position + inputPos * moveSpeed;
-	positionVector = XMLoadFloat3(&position);
+	positionVector = XMVectorAdd(positionVector, XMVector3Transform(XMLoadFloat3(&inputPos) * moveSpeed, rotationMatrix));
+	XMStoreFloat3(&position, positionVector);
+
+	//position = position + inputPos * moveSpeed;
+	//positionVector = XMLoadFloat3(&position);
 	UpdateViewMatrix();
 }
 
