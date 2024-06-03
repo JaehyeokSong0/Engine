@@ -1,5 +1,4 @@
 #pragma once
-#include "../DataType.h"
 
 class VertexShader
 {

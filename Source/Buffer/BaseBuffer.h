@@ -1,7 +1,6 @@
 // Base class of VB, IB, CB
 #pragma once
 #include <stdafx.h>
-#include "../DataType.h"
 
 class BaseBuffer 
 {

@@ -5,8 +5,6 @@
   XMStoreFloat() : XMVECTOR to XMFLOAT
 */
 
-const XMFLOAT3 XMFLOAT3_ZERO= XMFLOAT3(0.0f, 0.0f, 0.0f);
-const XMVECTOR XMVECTOR_ZERO = { 0.0f, 0.0f, 0.0f };
 const XMVECTOR DEFAULT_EYE = { 0.0f, 0.0f, 0.0f };
 const XMVECTOR DEFAULT_AT = { 0.0f, 0.0f, 1.0f };
 const XMVECTOR DEFAULT_UP = { 0.0f, 1.0f, 0.0f };

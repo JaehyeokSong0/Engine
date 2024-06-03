@@ -1,14 +1,18 @@
 #pragma once
 #include "../Buffer/Buffer.h"
+#include "../Component/Component.h"
 
-class Model
+const wstring TYPE_MODEL = L"Model";
+
+class Model : Component
 {
 public:
-	Model();
+	Model(const wstring type = TYPE_MODEL);
 	~Model();
 
-	HRESULT Initialize();
-	HRESULT Render();
+	HRESULT Initialize(ID3D11Device* device);
+	void Update() override;
+	void Destroy() override;
 
 private:
 	VertexBuffer* vertexBuffer = nullptr;

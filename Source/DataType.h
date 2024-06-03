@@ -1,5 +1,10 @@
+// Included in <stdafx.h>
 #pragma once
 #include<DirectXMath.h>
+using namespace DirectX;
+
+const XMFLOAT3 XMFLOAT3_ZERO = XMFLOAT3(0.0f, 0.0f, 0.0f);
+const XMVECTOR XMVECTOR_ZERO = { 0.0f, 0.0f, 0.0f };
 
 struct Vertex
 {
@@ -13,6 +18,12 @@ struct Vertex
 
 	XMFLOAT3 position;
 	XMFLOAT2 texCoord;
+};
+
+struct Transform
+{
+	XMFLOAT3 position;
+	XMFLOAT3 rotation;
 };
 
 struct TransformCB

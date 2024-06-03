@@ -1,12 +1,13 @@
 #include <stdafx.h>
 #include "Model.h"
 
-Model::Model()
+Model::Model(const wstring type)
 	: vertexBuffer(new VertexBuffer())
 	, indexBuffer(new IndexBuffer())
 	, constantBuffer(new ConstantBuffer())
 	, worldMatrix(XMMatrixIdentity())
 {
+	this->type = type;
 }
 
 Model::~Model()
@@ -30,16 +31,20 @@ Model::~Model()
 
 // 해야하는 것 
 // : vb, ib, cb로 물체 생성 후 render에서 bind -> device, context 필요
-HRESULT Model::Initialize()
+HRESULT Model::Initialize(ID3D11Device* device)
 {
 	HRESULT hr = S_OK;
 
 	return hr;
 }
 
-HRESULT Model::Render()
+void Model::Update()
 {
-	HRESULT hr = S_OK;
 
-	return hr;
+	return;
+}
+
+void Model::Destroy()
+{
+	return;
 }
