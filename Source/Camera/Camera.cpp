@@ -84,7 +84,7 @@ void Camera::SetProjectionValues(float fovY, float aspect, float nearZ, float fa
 	UpdateProjectionMatrix();
 }
 
-float Camera::GetMoveSpeed()
+float Camera::GetMoveSpeed() const
 {
 	return moveSpeed;
 }
@@ -94,7 +94,7 @@ void Camera::SetMoveSpeed(float value)
 	moveSpeed = value;
 }
 
-float Camera::GetRotateSpeed()
+float Camera::GetRotateSpeed() const
 {
 	return rotateSpeed;
 }
@@ -147,7 +147,7 @@ void Camera::Rotate(XMVECTOR inputRot)
 
 void Camera::Rotate(XMFLOAT3 inputRot)
 {
-	//cout << inputRot.x << "," << inputRot.y << "," << inputRot.z << "\n";
+	// cout << rotation.x << "," << rotation.y << "," << rotation.z << "\n";
 	rotation = rotation + inputRot * rotateSpeed;
 	rotationVector = XMLoadFloat3(&rotation);
 	UpdateRotationMatrix();
@@ -155,11 +155,11 @@ void Camera::Rotate(XMFLOAT3 inputRot)
 
 void Camera::UpdateRotationMatrix()
 {
-	/*float pitch = rotation.x; (+up -down)
-	float yaw = rotation.y; (+left -right)
-	float roll = rotation.z; (+clockwise -counterClockwise)(Usually not used (except. FPS peeking))
-	
-	rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);*/
+	//float pitch = rotation.x; // (+up -down)
+	//float yaw = rotation.y; // (+left -right)
+	//float roll = rotation.z; // (+clockwise -counterClockwise)(Usually not used (except. FPS peeking))
+	//
+	//rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 	rotationMatrix = XMMatrixRotationRollPitchYawFromVector(rotationVector);
 	UpdateViewMatrix();
 }

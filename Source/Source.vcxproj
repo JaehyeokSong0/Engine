@@ -186,6 +186,7 @@
     <ClCompile Include="InputSystem\Keyboard\KeyboardManager.cpp" />
     <ClCompile Include="InputSystem\Mouse\MouseManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
     <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="PCH\stdafx.cpp">
@@ -212,6 +213,7 @@
     <ClInclude Include="InputSystem\InputSystem.h" />
     <ClInclude Include="InputSystem\Keyboard\KeyboardManager.h" />
     <ClInclude Include="InputSystem\Mouse\MouseManager.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="PCH\stdafx.h" />

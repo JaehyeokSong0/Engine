@@ -25,21 +25,22 @@ void MouseManager::AlterMouseMode()
 
 void MouseManager::SetSensitivity(float value)
 {
-	sensitivity = value;
+	if(value >= 0.0f)
+		sensitivity = value;
 }
 
-float MouseManager::GetSensitivity()
+float MouseManager::GetSensitivity() const
 {
 	return sensitivity;
 }
 
-Mouse::State MouseManager::GetMouseState()
+Mouse::State MouseManager::GetMouseState() const
 {
 	return mouse->GetState();
 }
 
 // return x, y move state
-MouseRelativeMove MouseManager::GetMouseDragState()
+MouseRelativeMove MouseManager::GetMouseDragState() 
 {
 	int retX = 0, retY = 0;
 

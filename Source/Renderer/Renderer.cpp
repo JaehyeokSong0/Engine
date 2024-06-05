@@ -138,6 +138,7 @@ HRESULT Renderer::Initialize(HWND hWnd, int width, int height)
 	swapChainDesc.OutputWindow = hWnd;
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Full screen and windowed, resize available
 
 	// Create Device & SwapChain
@@ -307,6 +308,15 @@ Camera* Renderer::GetCamera()
 	return this->camera;
 }
 
+void Renderer::DestroyTest()
+{
+	if (testModel == nullptr)
+		return;
+
+	testModel->Destroy();
+	testModel = nullptr;
+}
+
 HRESULT Renderer::InitializeScene()
 {
 	HRESULT hr = S_OK;
@@ -315,8 +325,10 @@ HRESULT Renderer::InitializeScene()
 	camera->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
 
 	// TEST CODE
+	//string testModelPath = "Resources/Models/r8.fbx";
+	string testModelPath = "Resources/Models/RubiksCube.obj";
 	testModel = new Model();
-	testModel->Initialize(device, context);
+	testModel->Initialize(testModelPath, device, context);
 
 	return hr;
 }
@@ -337,10 +349,8 @@ HRESULT Renderer::Render()
 		0u // Value to clear stencil
 	);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	testModel->UpdateMatrices(camera->GetViewMatrix(), camera->GetProjectionMatrix());
-
 	context->IASetInputLayout(vertexShader->GetInputLayout());
+	
 	context->VSSetShader(vertexShader->GetVertexShader(), NULL, 0u);
 	context->PSSetShader(pixelShader->GetPixelShader(), NULL, 0u);
 
@@ -349,8 +359,11 @@ HRESULT Renderer::Render()
 
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 
-	// TEST CODE
-	testModel->Update();
+	if (testModel != nullptr)
+	{
+		testModel->UpdateMatrices(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+		testModel->Update();
+	}
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음
 	if (FAILED(hr))

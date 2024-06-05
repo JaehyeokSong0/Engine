@@ -21,9 +21,9 @@ public:
 	void AlterMouseMode();
 
 	void SetSensitivity(float value);
-	float GetSensitivity();
+	float GetSensitivity() const;
 
-	Mouse::State GetMouseState();
+	Mouse::State GetMouseState() const;
 	MouseRelativeMove GetMouseDragState();
 
 private:

@@ -2,16 +2,17 @@
 
 enum class ComponentClass
 {
-	MODEL = 0x0100,
+	MODEL,
 };
 
 class Component abstract
 {
 public:
 	Component() = default;
-	Component(const ComponentClass type);
+	Component(const ComponentClass& type);
 	virtual ~Component() = default;
 
+	virtual void Start() = 0;
 	virtual void Update() = 0;
 	// All components must deallocate its allocated objects before its removal from Object.
 	virtual void Destroy() = 0;

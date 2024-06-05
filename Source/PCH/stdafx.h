@@ -33,3 +33,4 @@ using namespace Microsoft::WRL;
 
 void DebugLog(string str, const source_location& loc = source_location::current());
 void DebugLog(wstring wstr, const source_location& loc = source_location::current());
+void CheckMemoryLeak();

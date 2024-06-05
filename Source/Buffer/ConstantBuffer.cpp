@@ -6,7 +6,7 @@ HRESULT ConstantBuffer::Create(ID3D11Device* device, UINT size)
 	HRESULT hr = S_OK;
 
 	if (size % 16 != 0)
-		size = ((size / 16) + 1) * 16;
+		DebugLog("Constant Buffer size is inappropriate");
 
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 	bufferDesc.ByteWidth = size;

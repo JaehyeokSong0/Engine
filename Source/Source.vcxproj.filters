@@ -28,6 +28,7 @@
     <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Component\Component.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Graphics">

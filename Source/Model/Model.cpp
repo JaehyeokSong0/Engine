@@ -2,9 +2,7 @@
 #include "Model.h"
 
 Model::Model(const ComponentClass& type)
-	: vertexBuffer(new VertexBuffer())
-	, indexBuffer(new IndexBuffer())
-	, constantBuffer(new ConstantBuffer())
+	: constantBuffer(new ConstantBuffer())
 	, texture(new Texture())
 	, worldMatrix(XMMatrixIdentity())
 	, viewMatrix(XMMatrixIdentity())
@@ -15,61 +13,39 @@ Model::Model(const ComponentClass& type)
 
 Model::~Model()
 {
-	if (vertexBuffer != nullptr)
-	{
-		delete vertexBuffer;
-		vertexBuffer = nullptr;
-	}
-	if (indexBuffer!= nullptr)
-	{
-		delete indexBuffer;
-		indexBuffer= nullptr;
-	}
+	meshes.clear();
 	if (constantBuffer!= nullptr)
 	{
 		delete constantBuffer;
 		constantBuffer = nullptr;
 	}
+	if (texture != nullptr)
+	{
+		delete texture;
+		texture = nullptr;
+	}
 }
 
-HRESULT Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
+HRESULT Model::Initialize(const string& filePath, ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	HRESULT hr = S_OK;
 
 	this->device = device;
 	this->context = context;
 
-	// TEST CODE
-	vector<Vertex> testVertex =
+
+	hr = this->LoadModel(filePath);
+	if (FAILED(hr))
 	{
-		Vertex(XMFLOAT3(-0.5f, -0.5f, 1.0f), XMFLOAT2(0.0f, 1.0f)),
-		Vertex(XMFLOAT3(-0.5f, 0.5f, 1.0f), XMFLOAT2(0.0f, 0.0f)),
-		Vertex(XMFLOAT3(0.5f, 0.5f, 1.0f), XMFLOAT2(1.0f, 0.0f)),
-		Vertex(XMFLOAT3(0.5f, -0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f))
-	};
-	vector<UINT> testIndex =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
+		DebugLog("LoadModel Failed");
+		return hr;
+	}
+
 	hr = texture->Initialize(device, context, L"Resources/Textures/cheems.png");
+	//hr = texture->Initialize(device, context, L"Resources/Models/RubiksCube.mtl");
 	if (FAILED(hr))
 	{
 		DebugLog("Texture initialization Failed");
-		return hr;
-	}
-
-	hr = vertexBuffer->Create(device, testVertex);
-	if (FAILED(hr))
-	{
-		DebugLog("Create Vertex buffer Failed");
-		return hr;
-	}
-
-	hr = indexBuffer->Create(device, testIndex);
-	if (FAILED(hr))
-	{
-		DebugLog("Create Index buffer Failed");
 		return hr;
 	}
 
@@ -81,6 +57,10 @@ HRESULT Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
 	}
 
 	return hr;
+}
+
+void Model::Start()
+{
 }
 
 void Model::Update()
@@ -96,10 +76,8 @@ void Model::Update()
 
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
-	vertexBuffer->Bind(context);
-	indexBuffer->Bind(context);
-
-	context->DrawIndexed(6u, 0u, 0);
+	for (int i = 0; i < meshes.size(); i++)
+		meshes[i].Render();
 
 	// Bind texture, VB, IB, CB
 	return;
@@ -107,11 +85,76 @@ void Model::Update()
 
 void Model::Destroy()
 {
-	return;
+	delete this;
 }
 
 void Model::UpdateMatrices(XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	this->viewMatrix = viewMatrix;
 	this->projectionMatrix = projectionMatrix;
+}
+
+HRESULT Model::LoadModel(const string& filePath)
+{
+	HRESULT hr = S_OK;
+
+	Assimp::Importer importer;
+
+	const aiScene* pScene = importer.ReadFile
+	(
+		filePath,
+		aiProcess_Triangulate
+		| aiProcess_ConvertToLeftHanded
+	);
+
+	if (pScene == nullptr)
+		return E_FAIL;
+
+	meshes.reserve(pScene->mNumMeshes);
+	this->ProcessNode(pScene->mRootNode, pScene);
+
+	return hr;
+}
+
+void Model::ProcessNode(aiNode* node, const aiScene* scene)
+{
+	for (UINT i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		meshes.emplace_back(this->ProcessMesh(mesh, scene)); // Avoid calling copy constructor with using meshes.reserve()
+		// meshes.push_back(this->ProcessMesh(mesh, scene)); // Calls Mesh(const Mesh& mesh) here
+	}
+
+	for (UINT i = 0; i < node->mNumChildren; i++)
+	{
+		this->ProcessNode(node->mChildren[i], scene);
+	}
+	
+}
+
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+{
+	vector<Vertex> vertices;
+	vector<UINT> indices;
+
+	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	{
+		XMFLOAT3 position = XMFLOAT3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+		XMFLOAT2 texture = XMFLOAT2(0.0f, 0.0f);
+
+		if (mesh->mTextureCoords[0])
+			texture = XMFLOAT2((float)mesh->mTextureCoords[0][i].x, (float)mesh->mTextureCoords[0][i].y);
+
+		vertices.push_back(Vertex(position, texture));
+	}
+
+	for (UINT i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+
+		for (UINT j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
+	}
+
+	return Mesh(device, context, vertices, indices);
 }

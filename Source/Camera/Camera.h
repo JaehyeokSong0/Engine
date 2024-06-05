@@ -26,9 +26,9 @@ public:
 	void SetRotation(XMVECTOR rotation);
 	void SetProjectionValues(float fovY, float aspect, float nearZ, float farZ);
 
-	float GetMoveSpeed();
+	float GetMoveSpeed() const;
 	void SetMoveSpeed(float value);
-	float GetRotateSpeed();
+	float GetRotateSpeed() const;
 	void SetRotateSpeed(float value);
 
 	const XMMATRIX GetRotationMatrix() const;

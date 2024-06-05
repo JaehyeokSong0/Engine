@@ -72,8 +72,7 @@ bool Engine::ProcessMessage()
 		if (message.message == WM_LBUTTONUP)
 		{
 			//TEST CODE
-			//window->GetMouse()->AlterMouseMode();
-			window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() + 0.1f);
+			// window->GetMouse()->AlterMouseMode();
 		}
 
 		if (message.message == WM_MOUSEMOVE)
@@ -105,6 +104,14 @@ bool Engine::ProcessMessage()
 				renderer->GetCamera()->Move(XMFLOAT3(-1.0f, 0.0f, 0.0f));
 			else if (kb.D)
 				renderer->GetCamera()->Move(XMFLOAT3(1.0f, 0.0f, 0.0f));
+
+			if(kb.PageUp)
+				window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() + 0.1f);
+			if (kb.PageDown)
+				window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() - 0.1f);
+
+			if (kb.Delete)
+				renderer->DestroyTest();
 		}
 
 		TranslateMessage(&message);

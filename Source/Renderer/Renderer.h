@@ -3,7 +3,7 @@
 #include "../Texture/Texture.h"
 #include "../Buffer/Buffer.h"
 #include "../Camera/Camera.h"
-#include "../Model/Model.h" // TEST CODE
+#include "../Model/Model.h"
 
 class Renderer final
 {
@@ -19,6 +19,9 @@ public:
 	HRESULT InitializeShaders();
 
 	Camera* GetCamera();
+
+	// TEST CODE
+	void DestroyTest();
 
 private:
 	int width;
