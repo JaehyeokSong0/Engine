@@ -13,17 +13,9 @@ Renderer::Renderer()
 	vertexShader = new VertexShader();
 	pixelShader = new PixelShader();
 
-	vertexBuffer = new VertexBuffer();
-	indexBuffer = new IndexBuffer();
-	constantBuffer = new ConstantBuffer();
-
-	//texture = new Texture(L"Resources/Textures/cheems.png");
-	texture = new Texture();
-
 	camera = new Camera();
 }
 
-// (TODO) ComPtr로 변환하기
 Renderer::~Renderer()
 {
 	// Release DX devices
@@ -75,35 +67,11 @@ Renderer::~Renderer()
 		pixelShader = nullptr;
 	}
 
-	// Delete buffers
-	if (vertexBuffer != nullptr)
-	{
-		delete vertexBuffer;
-		vertexBuffer = nullptr;
-	}
-	if (indexBuffer != nullptr)
-	{
-		delete indexBuffer;
-		indexBuffer = nullptr;
-	}
-	if (constantBuffer != nullptr)
-	{
-		delete constantBuffer;
-		constantBuffer = nullptr;
-	}
-
 	// Delete Rasterizer
 	if (rasterizerState != nullptr)
 	{
 		rasterizerState->Release();
 		rasterizerState = nullptr;
-	}
-
-	// Delete Texture
-	if (texture != nullptr)
-	{
-		delete texture;
-		texture = nullptr;
 	}
 
 	// Delete Camera
@@ -308,6 +276,7 @@ Camera* Renderer::GetCamera()
 	return this->camera;
 }
 
+// TEST Function
 void Renderer::DestroyTest()
 {
 	if (testModel == nullptr)
@@ -356,8 +325,6 @@ HRESULT Renderer::Render()
 
 	context->RSSetState(rasterizerState);
 	context->OMSetDepthStencilState(depthStencilState, 0u);
-
-	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 
 	if (testModel != nullptr)
 	{

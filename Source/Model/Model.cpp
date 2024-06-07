@@ -73,7 +73,7 @@ void Model::Update()
 	transformCB.projectionMatrix = XMMatrixTranspose(projectionMatrix);
 	constantBuffer->SetData(context, &transformCB, sizeof(transformCB));
 	constantBuffer->Bind(context, 0u);
-
+	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
 
 	for (int i = 0; i < meshes.size(); i++)

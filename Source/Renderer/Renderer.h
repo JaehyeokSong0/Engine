@@ -1,6 +1,5 @@
 #pragma once
 #include "../Shader/Shader.h"
-#include "../Texture/Texture.h"
 #include "../Buffer/Buffer.h"
 #include "../Camera/Camera.h"
 #include "../Model/Model.h"
@@ -35,14 +34,10 @@ private:
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 	ID3D11DepthStencilState* depthStencilState = nullptr;
 	
-	VertexBuffer* vertexBuffer = nullptr;
-	IndexBuffer* indexBuffer = nullptr;
-	ConstantBuffer* constantBuffer = nullptr; // (TODO) Rename later
 	ID3D11RasterizerState* rasterizerState = nullptr;
 
 	VertexShader* vertexShader = nullptr;
 	PixelShader* pixelShader = nullptr;
-	Texture* texture = nullptr;
 
 	Camera* camera = nullptr;
 

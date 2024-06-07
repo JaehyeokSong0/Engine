@@ -24,9 +24,8 @@ XMFLOAT3 operator*(const XMFLOAT3 lhs, const float rhs)
 }
 
 Camera::Camera()
-	: position(XMFLOAT3_ZERO), rotation(XMFLOAT3_ZERO)
-	, positionVector(XMLoadFloat3(&position))
-	, rotationVector(XMLoadFloat3(&rotation))
+	: positionVector(XMVECTOR_ZERO)
+	, rotationVector(XMVECTOR_ZERO)
 	, moveSpeed(DEFAULT_MOVE_SPEED)
 	, rotateSpeed(DEFAULT_ROTATE_SPEED)
 	, eye(DEFAULT_EYE)
@@ -47,30 +46,14 @@ void Camera::Initialize(XMVECTOR position, XMVECTOR rotation)
 	SetRotation(rotation);
 }
 
-void Camera::SetPosition(XMFLOAT3 position)
-{
-	this->position = position;
-	positionVector = XMLoadFloat3(&this->position);
-	UpdateViewMatrix();
-}
-
 void Camera::SetPosition(XMVECTOR position) // World position
 {
-	XMStoreFloat3(&this->position, position);
 	positionVector = position;
 	UpdateViewMatrix();
 }
 
-void Camera::SetRotation(XMFLOAT3 rotation)
-{
-	this->rotation = rotation;
-	rotationVector = XMLoadFloat3(&this->rotation);
-	UpdateRotationMatrix();
-}
-
 void Camera::SetRotation(XMVECTOR rotation)
 {
-	XMStoreFloat3(&this->rotation, rotation);
 	rotationVector = rotation;
 	UpdateRotationMatrix();
 }
@@ -122,34 +105,14 @@ const XMMATRIX Camera::GetProjectionMatrix() const
 void Camera::Move(XMVECTOR inputPos)
 {
 	positionVector = XMVectorAdd(positionVector, XMVector3Transform(inputPos * moveSpeed, rotationMatrix));
-	XMStoreFloat3(&position, positionVector);
-
 	//positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
-	UpdateViewMatrix();
-}
 
-void Camera::Move(XMFLOAT3 inputPos)
-{
-	positionVector = XMVectorAdd(positionVector, XMVector3Transform(XMLoadFloat3(&inputPos) * moveSpeed, rotationMatrix));
-	XMStoreFloat3(&position, positionVector);
-
-	//position = position + inputPos * moveSpeed;
-	//positionVector = XMLoadFloat3(&position);
 	UpdateViewMatrix();
 }
 
 void Camera::Rotate(XMVECTOR inputRot)
 {
 	rotationVector = XMVectorAdd(rotationVector, inputRot * rotateSpeed);
-	XMStoreFloat3(&rotation, rotationVector);
-	UpdateRotationMatrix();
-}
-
-void Camera::Rotate(XMFLOAT3 inputRot)
-{
-	// cout << rotation.x << "," << rotation.y << "," << rotation.z << "\n";
-	rotation = rotation + inputRot * rotateSpeed;
-	rotationVector = XMLoadFloat3(&rotation);
 	UpdateRotationMatrix();
 }
 
@@ -171,6 +134,8 @@ void Camera::UpdateViewMatrix()
 	at = eye + XMVector3Transform(DEFAULT_AT, rotationMatrix);
 	up = XMVector3Transform(DEFAULT_UP, rotationMatrix);
 
+	/*cout << "EYE : (" << eye.m128_f32[0] << "," << eye.m128_f32[1] << "," << eye.m128_f32[2]
+		<< ") , AT : (" << at.m128_f32[0] << "," << at.m128_f32[1] << "," << at.m128_f32[2] <<")\n";*/
 	// Set Camera coordinates { camLookAt, camUp, camRight } 
 	// Same as normalized { at-eye , up X camLookAt , camLookAt X camRight }
 	// So the output viewMatrix is orthonormal

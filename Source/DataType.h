@@ -5,6 +5,9 @@ using namespace DirectX;
 
 const XMFLOAT3 XMFLOAT3_ZERO = XMFLOAT3(0.0f, 0.0f, 0.0f);
 const XMVECTOR XMVECTOR_ZERO = { 0.0f, 0.0f, 0.0f };
+const XMVECTOR XMVECTOR_X = { 1.0f, 0.0f, 0.0f };
+const XMVECTOR XMVECTOR_Y = { 0.0f, 1.0f, 0.0f };
+const XMVECTOR XMVECTOR_Z = { 0.0f, 0.0f, 1.0f };
 
 struct Vertex
 {

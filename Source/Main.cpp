@@ -28,8 +28,5 @@ int APIENTRY wWinMain(
 
 	delete engine;
 
-#ifdef _DEBUG
-	CheckMemoryLeak();
-#endif
 	return 0;
 }

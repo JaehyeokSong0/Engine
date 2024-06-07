@@ -79,12 +79,12 @@ bool Engine::ProcessMessage()
 		{
 			MouseRelativeMove mouseMove = window->GetMouse()->GetMouseDragState();
 			float mouseSensitivity = window->GetMouse()->GetSensitivity();
-			XMFLOAT3 relativeRot
-				= XMFLOAT3(
-					static_cast<float>(mouseMove.y) * mouseSensitivity * -1.0f,
-					static_cast<float>(mouseMove.x) * mouseSensitivity,
-					0.0f
-				);
+			XMVECTOR relativeRot = 
+			{
+				static_cast<float>(mouseMove.y) * mouseSensitivity * -1.0f,
+				static_cast<float>(mouseMove.x) * mouseSensitivity,
+				0.0f
+			};
 
 			// TEST CODE
 			renderer->GetCamera()->Rotate(relativeRot);
@@ -96,16 +96,16 @@ bool Engine::ProcessMessage()
 
 			// TEST CODE
 			if (kb.W)
-				renderer->GetCamera()->Move(XMFLOAT3(0.0f, 0.0f, 1.0f));
+				renderer->GetCamera()->Move(XMVECTOR_Z);
 			else if (kb.S)
-				renderer->GetCamera()->Move(XMFLOAT3(0.0f, 0.0f, -1.0f));
+				renderer->GetCamera()->Move(XMVECTOR_Z * (-1.0f));
 
-			if (kb.A)
-				renderer->GetCamera()->Move(XMFLOAT3(-1.0f, 0.0f, 0.0f));
-			else if (kb.D)
-				renderer->GetCamera()->Move(XMFLOAT3(1.0f, 0.0f, 0.0f));
+			if (kb.D)
+				renderer->GetCamera()->Move(XMVECTOR_X);
+			else if (kb.A)
+				renderer->GetCamera()->Move(XMVECTOR_X * (-1.0f));
 
-			if(kb.PageUp)
+			if (kb.PageUp)
 				window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() + 0.1f);
 			if (kb.PageDown)
 				window->GetMouse()->SetSensitivity(window->GetMouse()->GetSensitivity() - 0.1f);

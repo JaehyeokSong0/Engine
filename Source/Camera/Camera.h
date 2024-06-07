@@ -20,9 +20,7 @@ public:
 
 	void Initialize(XMVECTOR position = XMVECTOR_ZERO, XMVECTOR rotation = XMVECTOR_ZERO);
 
-	void SetPosition(XMFLOAT3 position);
 	void SetPosition(XMVECTOR position);
-	void SetRotation(XMFLOAT3 rotation);
 	void SetRotation(XMVECTOR rotation);
 	void SetProjectionValues(float fovY, float aspect, float nearZ, float farZ);
 
@@ -37,14 +35,9 @@ public:
 
 	// Input parameter¸¸Å­ transform update
 	void Move(XMVECTOR inputPos);
-	void Move(XMFLOAT3 inputPos);
 	void Rotate(XMVECTOR inputRot);
-	void Rotate(XMFLOAT3 inputRot);
 
 private:
-	XMFLOAT3 position;
-	XMFLOAT3 rotation; // use radian
-
 	XMVECTOR positionVector;
 	XMVECTOR rotationVector;
 
