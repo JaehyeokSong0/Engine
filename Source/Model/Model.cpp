@@ -75,7 +75,7 @@ void Model::Update()
 	constantBuffer->Bind(context, 0u);
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
-
+	
 	for (int i = 0; i < meshes.size(); i++)
 		meshes[i].Render();
 
@@ -136,7 +136,9 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
 	vector<Vertex> vertices;
 	vector<UINT> indices;
+	vector<Texture> textures;
 
+	// Vertices
 	for (UINT i = 0; i < mesh->mNumVertices; i++)
 	{
 		XMFLOAT3 position = XMFLOAT3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
@@ -148,12 +150,20 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		vertices.push_back(Vertex(position, texture));
 	}
 
+	// Indices
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
 			indices.push_back(face.mIndices[j]);
+	}
+
+	// Textures
+	if (mesh->mMaterialIndex >= 0)
+	{
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		vector<Texture> // TODO
 	}
 
 	return Mesh(device, context, vertices, indices);

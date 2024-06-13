@@ -5,7 +5,7 @@
   XMStoreFloat() : XMVECTOR to XMFLOAT
 */
 
-const XMVECTOR DEFAULT_EYE = { 0.0f, 0.0f, 0.0f };
+const XMVECTOR DEFAULT_EYE = { 0.0f, 2.0f, -5.0f }; // Temporary value because of RumikCube's y position is on 2.0f
 const XMVECTOR DEFAULT_AT = { 0.0f, 0.0f, 1.0f };
 const XMVECTOR DEFAULT_UP = { 0.0f, 1.0f, 0.0f };
 
@@ -18,7 +18,7 @@ public:
 	Camera();
 	~Camera() = default;
 
-	void Initialize(XMVECTOR position = XMVECTOR_ZERO, XMVECTOR rotation = XMVECTOR_ZERO);
+	void Initialize(XMVECTOR position = DEFAULT_EYE, XMVECTOR rotation = XMVECTOR_ZERO);
 
 	void SetPosition(XMVECTOR position);
 	void SetRotation(XMVECTOR rotation);

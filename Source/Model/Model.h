@@ -3,7 +3,7 @@
 #include "../Texture/Texture.h"
 #include "../Mesh/Mesh.h"
 
-class Model : Component
+class Model : public Component
 {
 public:
 	Model(const ComponentClass& type = ComponentClass::MODEL);

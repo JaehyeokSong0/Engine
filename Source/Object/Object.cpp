@@ -1,33 +1,23 @@
 #include <stdafx.h>
 #include "Object.h"
-#include "../Component/Component.h"
 
 Object::Object()
 {
-	transform = new Transform(XMFLOAT3_ZERO, XMFLOAT3_ZERO);
+	transform = Transform(XMFLOAT3_ZERO, XMFLOAT3_ZERO);
 	components.clear();
 }
 
 Object::~Object()
 {
-	if (transform != nullptr)
-	{
-		delete transform;
-		transform = nullptr;
-	}
-
 	// Deallocate components
 	for (auto component : components)
 	{
 		if (component != nullptr)
 		{
 			component->Destroy();
-
-			delete component;
 			component = nullptr;
 		}
 	}
-
 	components.clear();
 }
 
@@ -38,8 +28,19 @@ void Object::Create()
 void Object::Create(const Transform& transform)
 {
 	//this->transform = transform;
-	this->transform->position = transform.position;
-	this->transform->rotation = transform.rotation;
+	this->transform.position = transform.position;
+	this->transform.rotation = transform.rotation;
+}
+
+void Object::SetTransform(const Transform& transform)
+{
+	this->transform.position = transform.position;
+	this->transform.rotation = transform.rotation;
+}
+
+Transform Object::GetTransform() const
+{
+	return this->transform;
 }
 
 void Object::Update()
@@ -56,7 +57,7 @@ void Object::Update()
 bool Object::AddComponent(Component* newComponent)
 {
 	// If object already has the component
-	if (GetComponent(newComponent->GetComponentType()) == true)
+	if (GetComponent(newComponent->GetComponentType()) != nullptr)
 		return false;
 
 	components.push_back(newComponent);
@@ -89,7 +90,7 @@ bool Object::RemoveComponent(Component* removeComponent)
 	return false;
 }
 
-bool Object::GetComponent(const ComponentClass type, Component* outComponent)
+Component* Object::GetComponent(const ComponentClass type)
 {
 	for (auto component : components)
 	{
@@ -97,11 +98,15 @@ bool Object::GetComponent(const ComponentClass type, Component* outComponent)
 		{
 			if (type == component->GetComponentType())
 			{
-				outComponent = component;
-				return true;
+				return component;
 			}
 		}
 	}
 
-	return false;
+	return nullptr;
+}
+
+void Object::Destroy()
+{
+	delete this;
 }

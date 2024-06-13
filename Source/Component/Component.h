@@ -1,7 +1,10 @@
 #pragma once
 
+class Object;
+
 enum class ComponentClass
 {
+	NONE,
 	MODEL,
 };
 
@@ -20,5 +23,6 @@ public:
 	const ComponentClass GetComponentType() const;
 
 protected:
-	ComponentClass type; // Every component need its name
+	Object* object = nullptr;
+	ComponentClass type = ComponentClass::NONE; // Every component need its name
 };

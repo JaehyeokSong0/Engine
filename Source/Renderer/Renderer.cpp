@@ -279,11 +279,11 @@ Camera* Renderer::GetCamera()
 // TEST Function
 void Renderer::DestroyTest()
 {
-	if (testModel == nullptr)
+	if (testObject == nullptr)
 		return;
 
-	testModel->Destroy();
-	testModel = nullptr;
+	testObject->Destroy();
+	testObject = nullptr;
 }
 
 HRESULT Renderer::InitializeScene()
@@ -294,10 +294,14 @@ HRESULT Renderer::InitializeScene()
 	camera->SetProjectionValues(90.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
 
 	// TEST CODE
+	testObject = new Object();
+	//testObject->Create(Transform(XMFLOAT3(1.0f,1.0f,1.0f), XMFLOAT3(1.0f, 1.0f, 1.0f)));
+	//Transform tmp = testObject->GetTransform();
 	//string testModelPath = "Resources/Models/r8.fbx";
 	string testModelPath = "Resources/Models/RubiksCube.obj";
 	testModel = new Model();
 	testModel->Initialize(testModelPath, device, context);
+	testObject->AddComponent(testModel);
 
 	return hr;
 }
@@ -325,11 +329,19 @@ HRESULT Renderer::Render()
 
 	context->RSSetState(rasterizerState);
 	context->OMSetDepthStencilState(depthStencilState, 0u);
-
+	/*
 	if (testModel != nullptr)
 	{
 		testModel->UpdateMatrices(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 		testModel->Update();
+	}
+	*/
+
+	if (testObject != nullptr)
+	{
+		Model* c_model = static_cast<Model*>(testObject->GetComponent(ComponentClass::MODEL));
+		c_model->UpdateMatrices(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+		testObject->Update();
 	}
 
 	hr = swapChain->Present(0u, 0u); // DXGI_SWAP_EFFECT_DISCARD일 때 : SyncInterval = 0 -> 즉시 present + 동기화 없음

@@ -1,6 +1,5 @@
 #pragma once
 #include <WICTextureLoader.h>
-
 class Texture final
 {
 public:

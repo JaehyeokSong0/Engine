@@ -105,7 +105,7 @@ const XMMATRIX Camera::GetProjectionMatrix() const
 void Camera::Move(XMVECTOR inputPos)
 {
 	positionVector = XMVectorAdd(positionVector, XMVector3Transform(inputPos * moveSpeed, rotationMatrix));
-	//positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
+	positionVector = XMVectorAdd(positionVector, inputPos * moveSpeed);
 
 	UpdateViewMatrix();
 }
@@ -134,8 +134,8 @@ void Camera::UpdateViewMatrix()
 	at = eye + XMVector3Transform(DEFAULT_AT, rotationMatrix);
 	up = XMVector3Transform(DEFAULT_UP, rotationMatrix);
 
-	/*cout << "EYE : (" << eye.m128_f32[0] << "," << eye.m128_f32[1] << "," << eye.m128_f32[2]
-		<< ") , AT : (" << at.m128_f32[0] << "," << at.m128_f32[1] << "," << at.m128_f32[2] <<")\n";*/
+	cout << "EYE : (" << eye.m128_f32[0] << "," << eye.m128_f32[1] << "," << eye.m128_f32[2]
+		<< ") , AT : (" << at.m128_f32[0] << "," << at.m128_f32[1] << "," << at.m128_f32[2] <<")\n";
 	// Set Camera coordinates { camLookAt, camUp, camRight } 
 	// Same as normalized { at-eye , up X camLookAt , camLookAt X camRight }
 	// So the output viewMatrix is orthonormal

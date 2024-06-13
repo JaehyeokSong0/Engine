@@ -3,6 +3,7 @@
 #include "../Buffer/Buffer.h"
 #include "../Camera/Camera.h"
 #include "../Model/Model.h"
+#include "../Object/Object.h"
 
 class Renderer final
 {
@@ -41,5 +42,7 @@ private:
 
 	Camera* camera = nullptr;
 
+	// TEST
+	Object* testObject = nullptr;
 	Model* testModel = nullptr;
 };
