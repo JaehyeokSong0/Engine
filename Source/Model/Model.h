@@ -1,6 +1,5 @@
 #pragma once
 #include "../Component/Component.h"
-#include "../Texture/Texture.h"
 #include "../Mesh/Mesh.h"
 
 class Model : public Component
@@ -18,6 +17,8 @@ public:
 	void UpdateMatrices(XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 	HRESULT LoadModel(const string& filePath);
+	vector<Texture> LoadMaterialTextures(aiMaterial* material, aiTextureType textureType);
+
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	Mesh ProcessMesh(aiMesh* node, const aiScene* scene);
 	// void SetPath(texturePath, modelPath) (TODO)

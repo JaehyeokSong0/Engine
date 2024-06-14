@@ -19,17 +19,53 @@ Texture::~Texture()
 	}
 }
 
-HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
+HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, aiColor3D* color)
 {
 	HRESULT hr = S_OK;
-
-	hr = CreateWICTextureFromFile(device, filePath, nullptr, &textureRV);
+	
+	this->color = *color;
+	/*hr = CreateWICTextureFromFile(device, filePath, nullptr, &textureRV);
 	if (FAILED(hr))
 	{
 		DebugLog("CreateWICTextureFromFile Failed");
 		return hr;
-	}
+	}*/
 
+	// Create texture description
+	CD3D11_TEXTURE2D_DESC textureDesc = {}; // TODO 
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.Width = 1;
+	textureDesc.Height = 1;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	textureDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = color;
+	initData.SysMemPitch = sizeof(color);
+
+	ID3D11Texture2D* texture = nullptr;
+	hr = device->CreateTexture2D(&textureDesc, &initData, &texture);
+	if (FAILED(hr))
+	{
+		DebugLog("CreateTexture2D Failed");
+		return hr;
+	}	
+	textureResource = static_cast<ID3D11Texture2D*>(texture);
+
+	CD3D11_SHADER_RESOURCE_VIEW_DESC shaderRVDesc = {};
+	shaderRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderRVDesc.Format = textureDesc.Format;
+
+	hr = device->CreateShaderResourceView(textureResource, &shaderRVDesc, &textureRV);
+	if (FAILED(hr))
+	{
+		DebugLog("CreateShaderResourceView Failed");
+		return hr;
+	}
+	
 	// Create Sampler state description
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; // use linear interpolation
@@ -52,7 +88,8 @@ HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
 HRESULT Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, LPCWSTR textureFilePath)
 {
 	SetFilePath(textureFilePath);
-	return Initialize(device, context);
+	aiColor3D defaultAiColor(0.0f, 0.0f, 0.0f);
+	return Initialize(device, context, &defaultAiColor);
 }
 
 ID3D11SamplerState*& Texture::GetSamplerState() 

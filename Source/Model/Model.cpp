@@ -14,7 +14,7 @@ Model::Model(const ComponentClass& type)
 Model::~Model()
 {
 	meshes.clear();
-	if (constantBuffer!= nullptr)
+	if (constantBuffer != nullptr)
 	{
 		delete constantBuffer;
 		constantBuffer = nullptr;
@@ -40,15 +40,16 @@ HRESULT Model::Initialize(const string& filePath, ID3D11Device* device, ID3D11De
 		DebugLog("LoadModel Failed");
 		return hr;
 	}
-
-	hr = texture->Initialize(device, context, L"Resources/Textures/cheems.png");
+	/*
+	//hr = texture->Initialize(device, context, L"Resources/Textures/cheems.png");
 	//hr = texture->Initialize(device, context, L"Resources/Models/RubiksCube.mtl");
+	hr = texture->Initialize(device, context);
 	if (FAILED(hr))
 	{
 		DebugLog("Texture initialization Failed");
 		return hr;
 	}
-
+	*/
 	hr = constantBuffer->Create(device, sizeof(TransformCB));
 	if (FAILED(hr))
 	{
@@ -75,7 +76,7 @@ void Model::Update()
 	constantBuffer->Bind(context, 0u);
 	context->PSSetSamplers(0u, 1u, &texture->GetSamplerState()); // PixelShader.hlsl에서 register에 매핑
 	context->PSSetShaderResources(0u, 1u, &texture->GetTextureRV());
-	
+
 	for (int i = 0; i < meshes.size(); i++)
 		meshes[i].Render();
 
@@ -116,6 +117,30 @@ HRESULT Model::LoadModel(const string& filePath)
 	return hr;
 }
 
+vector<Texture> Model::LoadMaterialTextures(aiMaterial* material, aiTextureType textureType)
+{
+	vector<Texture> textures;
+
+	unsigned int textureCount = material->GetTextureCount(textureType);
+	
+	for (unsigned int i = 0; i < textureCount; i++)
+	{
+		aiString path;
+		material->GetTexture(textureType, i, &path);
+
+		string directoryPath = "Resources/Models/";
+		string filePath = directoryPath + path.C_Str();
+
+		wstring wfilePath = wstring(filePath.begin(), filePath.end());
+
+		Texture texture;
+		texture.Initialize(device, context, wfilePath.c_str());
+		textures.push_back(texture);
+	}
+
+	return textures;
+}
+
 void Model::ProcessNode(aiNode* node, const aiScene* scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
@@ -129,7 +154,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	{
 		this->ProcessNode(node->mChildren[i], scene);
 	}
-	
+
 }
 
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
@@ -163,8 +188,13 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		vector<Texture> // TODO
+		
+		vector<Texture> diffuseTextures, specularTextures;
+		diffuseTextures = LoadMaterialTextures(material, aiTextureType::aiTextureType_DIFFUSE);
+		specularTextures = LoadMaterialTextures(material, aiTextureType::aiTextureType_SPECULAR);
+		textures.insert(textures.end(), diffuseTextures.begin(), diffuseTextures.end());
+		textures.insert(textures.end(), specularTextures.begin(), specularTextures.end());
 	}
 
-	return Mesh(device, context, vertices, indices);
+	return Mesh(device, context, vertices, indices, textures);
 }
